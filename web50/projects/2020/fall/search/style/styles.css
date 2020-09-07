@@ -1,0 +1,47 @@
+nav {
+    float: right;
+}
+
+#body {
+    text-align: center;
+}
+
+img {
+    padding: 10px;
+    display: block;
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+li {
+    display: inline;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+  }
+
+input[type=text] {
+    background-color: white;
+    background-image: url('../images/search.png');
+    background-position: 10px 10px;
+    background-size: 15px 15px;
+    background-repeat: no-repeat;
+    padding-left: 100px;
+    width: 40%;
+    padding: 12px 20px;
+    /* margin: 8px 0; */
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 60px;
+}
+
