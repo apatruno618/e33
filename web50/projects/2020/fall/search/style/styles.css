@@ -45,7 +45,7 @@ nav a:hover {
     box-shadow: 0 1px 6px 0 rgba(32, 33, 36, .28);
 }
 
-input[type=text] {
+.fancy-input[type=text] {
     width: 90%;
     outline: none; 
     background-color: transparent;
@@ -69,4 +69,19 @@ button {
 
 button:hover {
     border-color: rgba(47, 47, 48, 0.28);
+}
+
+.advanced {
+    text-align: left;
+}
+
+.advanced-submit {
+    background-color: #4d90fe;
+    background-image: -webkit-linear-gradient(top,#4d90fe,#4787ed);
+    background-image: -moz-line;
+    color: #fff;
+}
+
+.advanced-form {
+    font-family: arial,sans-serif;
 }
