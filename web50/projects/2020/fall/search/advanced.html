@@ -11,21 +11,31 @@
 <body>
     <nav>
         <ul>
-            <li><a href="images.html">Images</a></li>
-            <li><a href="advanced.html">Advanced</a></li>
+            <li><a href="index.html">Search</a></li>
         </ul>
     </nav>
     <div id="body">
-        <img src="images/main_logo.png" alt="Google logo" />
         <div>
             <form action="https://google.com/search">
-                <input type="text" name="q" /><br />
-                <!-- <input type="submit" value="Google Search">
-                <input type="submit" value="I'm Feeling Lucky">  -->
-                <button type="submit" value="Google Search">Google Search</button>
-                <button type="submit" name="btnI" value="I'm Feeling Lucky">
-                    I'm Feeling Lucky
-                </button>
+                <div>Find pages with...</div>
+                <div>
+                    <label>all these words:</label>
+                    <input type="text" name="as_q">
+                </div>
+                <div>
+                    <label>this exact word or phrase:</label>
+                    <input type="text" name="as_epq">
+                </div>
+                <div>
+                    <label>any of these words:</label>
+                    <input type="text" name="as_oq">
+                </div>
+                <div>
+                    <label>none of these words:</label>
+                    <input type="text" name="as_eq">
+                </div>
+                <button type="submit" value="Advanced Search">Advanced Search</button>
+
             </form>
         </div>
     </div>
