@@ -10,35 +10,32 @@
 
 <body>
     <div id="body">
-        <div class="grid-container advanced">
-            <div class="grid-item">
+        <div class="grid-container">
+            <div>
                 <nav>
                     <ul>
                         <li><a href="index.html">Search</a></li>
                     </ul>
                 </nav>
             </div>
-            <div class="grid-item advanced-form">
-                <form action="https://google.com/search">
-                    <div>Find pages with...</div>
-                    <div>
-                        <label>all these words:</label>
-                        <input type="text" name="as_q">
-                    </div>
-                    <div>
-                        <label>this exact word or phrase:</label>
-                        <input type="text" name="as_epq">
-                    </div>
-                    <div>
-                        <label>any of these words:</label>
-                        <input type="text" name="as_oq">
-                    </div>
-                    <div>
-                        <label>none of these words:</label>
-                        <input type="text" name="as_eq">
-                    </div>
-                    <button type="submit" value="Advanced Search" class="advanced-submit">Advanced Search</button>
 
+            <div>
+                <h3>Advanced Search</h3>
+                <form action="https://google.com/search" class="advanced-form">
+                    <div class="advanced-heading">Find pages with...</div><br>
+
+                    <label class="advanced-label">all these words:</label>
+                    <input type="text" name="as_q" class="advanced-input">
+
+                    <label class="advanced-label">this exact word or phrase:</label>
+                    <input type="text" name="as_epq" class="advanced-input">
+
+                    <label class="advanced-label">any of these words:</label>
+                    <input type="text" name="as_oq" class="advanced-input">
+
+                    <label class="advanced-label">none of these words:</label>
+                    <input type="text" name="as_eq" class="advanced-input">
+                    <button type="submit" value="Advanced Search" id="advanced-submit">Advanced Search</button>
                 </form>
             </div>
         </div>

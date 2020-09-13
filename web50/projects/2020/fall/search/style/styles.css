@@ -71,17 +71,54 @@ button:hover {
     border-color: rgba(47, 47, 48, 0.28);
 }
 
-.advanced {
-    text-align: left;
-}
-
-.advanced-submit {
+#advanced-submit {
     background-color: #4d90fe;
     background-image: -webkit-linear-gradient(top,#4d90fe,#4787ed);
     background-image: -moz-line;
     color: #fff;
+    float: right;
+    margin: 20px;
 }
 
 .advanced-form {
+    text-align: left;
+    width: 75%;
+    border: 3px solid #73AD21;
+    margin: 15px;
     font-family: arial,sans-serif;
+}
+
+.advanced-heading {
+    margin: 5px;
+}
+
+.advanced-label {
+    display: inline-block;
+    /* clear: right; */
+    width: 200px;
+    text-align: left;
+    margin: 5px;
+    font-size: 13px;
+}
+
+.advanced-input {
+    width: 75%;
+    padding: 5px;
+    margin: 5px;
+    text-align: left; 
+    
+}
+
+h3 {
+    align-items: left;
+    color: #d93025;
+    /* font-size: 20px; */
+    font-family: arial,sans-serif
+}
+
+h3:after
+{
+    content: ' ';
+    display: block;
+    border: 0.5px solid lightgray;
 }
