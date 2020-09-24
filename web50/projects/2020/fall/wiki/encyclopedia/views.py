@@ -8,3 +8,9 @@ def index(request):
         "entries": util.list_entries()
     })
 
+
+def content(request, entry):
+    return render(request, "encyclopedia/entry.html", {
+        "entry": entry,
+        "content": util.get_entry(entry)
+    })
