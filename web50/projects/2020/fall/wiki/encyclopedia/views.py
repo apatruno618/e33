@@ -1,3 +1,4 @@
+from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -6,6 +7,11 @@ import random as rmd
 
 
 from . import util
+
+
+class NewTaskForm(forms.Form):
+    title = forms.CharField(label="Title")
+    entry_description = forms.CharField(widget=forms.Textarea)
 
 
 def index(request):
@@ -40,3 +46,17 @@ def random(request):
     # })
 # return HttpResponseRedirect(reverse("encyclopedia/random_entry.html"))
 # return redirect('encyclopedia:wiki_page', page_title=random_entry)
+
+
+def add(request):
+    if request.method == "POST":
+        form = NewTaskForm(request.POST)
+        if form.is_valid():
+            # if the title already exists return an error
+            # else save it to disk
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["entry_description"]
+            new_entry = util.save_entry(title, description)
+    return render(request, "encyclopedia/add.html", {
+        "form": NewTaskForm()
+    })
