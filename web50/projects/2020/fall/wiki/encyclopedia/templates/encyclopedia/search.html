@@ -1,0 +1,16 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block body %}
+<h1>Search Results</h1>
+
+{% for entry in matches %}
+<li><a href="{% url 'wiki:content' entry=entry %}">{{ entry }}</a></li>
+{% empty %}
+No results match your search
+{% endfor %}
+
+{% endblock %}

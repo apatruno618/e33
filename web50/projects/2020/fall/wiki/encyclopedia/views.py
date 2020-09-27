@@ -14,12 +14,6 @@ class NewTaskForm(forms.Form):
     entry_description = forms.CharField(widget=forms.Textarea)
 
 
-# class EditTaskForm(forms.Form, entry):
-#     title = forms.CharField(label="Title", initial=entry.title)
-#     entry_description = forms.CharField(
-#         widget=forms.Textarea, initial=entry.content)
-
-
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
@@ -100,3 +94,19 @@ def update(request):
             description = form.cleaned_data["entry_description"]
             new_entry = util.save_entry(title, description)
             return HttpResponseRedirect(reverse("wiki:content", args=[title]))
+
+
+def search(request):
+    q = request.GET.get('q')
+    existing_entries = util.list_entries()
+    if (q in existing_entries):
+        return HttpResponseRedirect(reverse("wiki:content", args=[q]))
+    # get entries
+    # if search in entries direct to page
+    else:
+        matches = [i for i in existing_entries if q in i]
+        print(matches)
+        # else direct to search results
+        return render(request, "encyclopedia/search.html", {
+            "matches": matches
+        })
