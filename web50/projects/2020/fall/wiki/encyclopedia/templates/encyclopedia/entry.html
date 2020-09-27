@@ -15,6 +15,8 @@ error
 {% else %}
 {{ content|safe }}
 {% endif %}
-
+<a href="{% url 'wiki:edit' entry=entry %}">
+    <button class="btn btn-primary" type="submit">Edit</button>
+</a>
 
 {% endblock %}

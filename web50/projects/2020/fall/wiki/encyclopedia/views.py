@@ -14,6 +14,12 @@ class NewTaskForm(forms.Form):
     entry_description = forms.CharField(widget=forms.Textarea)
 
 
+# class EditTaskForm(forms.Form, entry):
+#     title = forms.CharField(label="Title", initial=entry.title)
+#     entry_description = forms.CharField(
+#         widget=forms.Textarea, initial=entry.content)
+
+
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
@@ -34,10 +40,10 @@ def content(request, entry):
 
 
 def random(request):
-    print("test")
-    entriess = util.list_entries()
-    print(type(entriess))
-    random_entry = rmd.choice(entriess)
+    # print("test")
+    entries = util.list_entries()
+    # print(type(entries))
+    random_entry = rmd.choice(entries)
     # return content(request, random_entry)
     return HttpResponseRedirect(reverse("wiki:content", args=[random_entry]))
     # return render(request, "encyclopedia/entry.html", {
@@ -63,3 +69,34 @@ def add(request):
     return render(request, "encyclopedia/add.html", {
         "form": NewTaskForm()
     })
+
+
+def edit(request, entry):
+    # if request.method == "POST":
+    #     form = NewTaskForm(request.POST)
+    #     if form.is_valid():
+    #         title = form.cleaned_data["title"]
+    #         description = form.cleaned_data["entry_description"]
+    #         updated_entry = util.save_entry(title, description)
+    #         return HttpResponseRedirect(reverse("wiki:content", args=[title]))
+    # else:
+    content = util.get_entry(entry)
+    form = NewTaskForm()
+    form["title"].initial = entry
+    form["entry_description"].initial = content
+    # form.title = entry
+    # form.entry_description = content
+
+    return render(request, "encyclopedia/edit.html", {
+        "form": form
+    })
+
+
+def update(request):
+    if request.method == "POST":
+        form = NewTaskForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["entry_description"]
+            new_entry = util.save_entry(title, description)
+            return HttpResponseRedirect(reverse("wiki:content", args=[title]))
