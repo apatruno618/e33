@@ -34,18 +34,9 @@ def content(request, entry):
 
 
 def random(request):
-    # print("test")
     entries = util.list_entries()
-    # print(type(entries))
     random_entry = rmd.choice(entries)
-    # return content(request, random_entry)
     return HttpResponseRedirect(reverse("wiki:content", args=[random_entry]))
-    # return render(request, "encyclopedia/entry.html", {
-    #     "entry": random_entry,
-    #     "content": markdown2.markdown(util.get_entry(random_entry))
-    # })
-# return HttpResponseRedirect(reverse("encyclopedia/random_entry.html"))
-# return redirect('encyclopedia:wiki_page', page_title=random_entry)
 
 
 def add(request):
@@ -55,6 +46,7 @@ def add(request):
             existing_entries = util.list_entries()
             title = form.cleaned_data["title"]
             description = form.cleaned_data["entry_description"]
+            # checks if an entry with that title already exists
             if (title in existing_entries):
                 return HttpResponse("An entry with that title already exists")
             else:
@@ -66,21 +58,11 @@ def add(request):
 
 
 def edit(request, entry):
-    # if request.method == "POST":
-    #     form = NewTaskForm(request.POST)
-    #     if form.is_valid():
-    #         title = form.cleaned_data["title"]
-    #         description = form.cleaned_data["entry_description"]
-    #         updated_entry = util.save_entry(title, description)
-    #         return HttpResponseRedirect(reverse("wiki:content", args=[title]))
-    # else:
     content = util.get_entry(entry)
     form = NewTaskForm()
+    # pre-populates fields
     form["title"].initial = entry
     form["entry_description"].initial = content
-    # form.title = entry
-    # form.entry_description = content
-
     return render(request, "encyclopedia/edit.html", {
         "form": form
     })
@@ -99,14 +81,12 @@ def update(request):
 def search(request):
     q = request.GET.get('q')
     existing_entries = util.list_entries()
+    # checks if search has an exact match
     if (q in existing_entries):
         return HttpResponseRedirect(reverse("wiki:content", args=[q]))
-    # get entries
-    # if search in entries direct to page
+    # otherwise looks for substrings of the search
     else:
         matches = [i for i in existing_entries if q in i]
-        print(matches)
-        # else direct to search results
         return render(request, "encyclopedia/search.html", {
             "matches": matches
         })
