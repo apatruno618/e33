@@ -1,5 +1,5 @@
 from django import forms
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 import markdown2
@@ -39,7 +39,7 @@ def random(request):
     print(type(entriess))
     random_entry = rmd.choice(entriess)
     # return content(request, random_entry)
-    return HttpResponseRedirect(reverse("content", args=[random_entry]))
+    return HttpResponseRedirect(reverse("wiki:content", args=[random_entry]))
     # return render(request, "encyclopedia/entry.html", {
     #     "entry": random_entry,
     #     "content": markdown2.markdown(util.get_entry(random_entry))
@@ -52,11 +52,14 @@ def add(request):
     if request.method == "POST":
         form = NewTaskForm(request.POST)
         if form.is_valid():
-            # if the title already exists return an error
-            # else save it to disk
+            existing_entries = util.list_entries()
             title = form.cleaned_data["title"]
             description = form.cleaned_data["entry_description"]
-            new_entry = util.save_entry(title, description)
+            if (title in existing_entries):
+                return HttpResponse("An entry with that title already exists")
+            else:
+                new_entry = util.save_entry(title, description)
+                return HttpResponseRedirect(reverse("wiki:content", args=[title]))
     return render(request, "encyclopedia/add.html", {
         "form": NewTaskForm()
     })
