@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+Listing
+{% endblock %}
+
+{% block body %}
+<div>
+	<h2> {{ listing.title }}</h2>
+	{% if user.is_authenticated %}
+	Add to watchlist
+	{% endif %}
+	<div>
+		<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
+		{{ listing.description }}
+		Current Price: ${{ listing.starting_bid }}
+		Created: {{ listing.date_created }}
+
+	</div>
+	<div>
+		<h6>Comments</h6>
+		{% for comment in comments %}
+		<div>
+			{{ comment.comment}}
+			{{ comment.user_id}}
+			{{ comment.date_created}}
+		</div>
+		{% empty %}
+		There are no comments.
+		{% endfor %}
+		{% if user.is_authenticated %}
+		<form action="{% url 'comment' %}" method="POST">
+			{% csrf_token %}
+			<input type="text" name="comment" , placeholder="Title">
+			<input class="btn btn-primary" type="submit">
+		</form>
+		{% endif %}
+
+	</div>
+
+</div>
+
+{% endblock %}

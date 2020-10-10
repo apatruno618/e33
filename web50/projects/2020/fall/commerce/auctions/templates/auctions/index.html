@@ -1,15 +1,21 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Active Listings</h2>
-{% for listing in listings %}
-<div>{{ listing }}</div>
-{% empty %}
-There are no active listings.
-{% endfor %}
+<div>
+	<h2>Active Listings</h2>
+	{% for listing in listings %}
+	<div>
+		<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
+		<h6>{{ listing.title }}</h6>
+		{{ listing.description }}
+		${{ listing.starting_bid }}
+		Created: {{ listing.date_created }}
+	</div>
+
+	{% empty %}
+	There are no active listings.
+	{% endfor %}
 
 
-
-
-TODO
+</div>
 {% endblock %}

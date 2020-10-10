@@ -4,7 +4,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Bid, Comment
+# from .models import Bid, Comment, Listing, User
+from .models import Comment, Listing, User
+
+# class NewTaskForm(forms.Form):
+#     title = forms.CharField(label="Title")
+#     description = forms.CharField(widget=forms.Textarea)
+# 	starting_bid = forms.
 
 
 def index(request):
@@ -63,3 +69,33 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+
+def create(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        description = request.POST["description"]
+        starting_bid = request.POST["starting_bid"]
+        photo_link = request.POST["photo_link"]
+        category = request.POST["category"]
+    else:
+        return render(request, "auctions/create.html")
+
+
+def listing(request, listing_id):
+    # find the listing by its id
+    listing = Listing.objects.get(pk=listing_id)
+    comments = Comment.objects.all()
+
+    if request.method == "POST":
+        comment = request.POST["comment"]
+        return HttpResponseRedirect(reverse("auctions/listing.html", args=[listing_id] {
+            "listing": listing,
+            "comments": comments
+        }))
+
+        else:
+            return render(request, "auctions/listing.html", {
+                "listing": listing,
+                "comments": comments
+            })
