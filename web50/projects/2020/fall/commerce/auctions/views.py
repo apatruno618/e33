@@ -73,11 +73,17 @@ def register(request):
 
 def create(request):
     if request.method == "POST":
-        title = request.POST["title"]
-        description = request.POST["description"]
-        starting_bid = request.POST["starting_bid"]
-        photo_link = request.POST["photo_link"]
-        category = request.POST["category"]
+        if request.POST.get('title') and request.POST.get('description') and request.POST.get('starting_bid'):
+
+            title = request.POST["title"]
+            description = request.POST["description"]
+            starting_bid = int(request.POST["starting_bid"])
+            photo_link = request.POST["photo_link"]
+            # category = request.POST["category"]
+            listing = Listing.save(
+                title, description, starting_bid, photo_link)
+
+            return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/create.html")
 
@@ -85,17 +91,14 @@ def create(request):
 def listing(request, listing_id):
     # find the listing by its id
     listing = Listing.objects.get(pk=listing_id)
-    comments = Comment.objects.all()
+    comments = Comment.objects.filter(listing_id=listing_id)
 
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "comments": comments
+    })
+
+
+def comment(request):
     if request.method == "POST":
-        comment = request.POST["comment"]
-        return HttpResponseRedirect(reverse("auctions/listing.html", args=[listing_id] {
-            "listing": listing,
-            "comments": comments
-        }))
-
-        else:
-            return render(request, "auctions/listing.html", {
-                "listing": listing,
-                "comments": comments
-            })
+        new_comment = request.POST["comment"]
