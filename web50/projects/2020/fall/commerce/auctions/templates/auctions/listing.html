@@ -6,16 +6,18 @@ Listing
 
 {% block body %}
 <div>
-	<h2> {{ listing.title }}</h2>
+	<h2>Listing: {{ listing.title }}</h2>
 	{% if user.is_authenticated %}
-	Add to watchlist
+	<form action="{% url 'watchlist' listing.id %}" method="POST">
+		{% csrf_token %}
+		<input class="btn btn-primary" type="submit" value="Watchlist">
+	</form>
 	{% endif %}
 	<div>
 		<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
-		{{ listing.description }}
-		Current Price: ${{ listing.starting_bid }}
-		Created: {{ listing.date_created }}
-
+		<div>{{ listing.description }}</div>
+		<div>Current Price: ${{ listing.starting_bid }}</div>
+		<div>Created: {{ listing.date_created }}</div>
 	</div>
 	<div>
 		<h6>Comments</h6>
@@ -35,6 +37,15 @@ Listing
 			<input class="btn btn-primary" type="submit">
 		</form>
 		{% endif %}
+
+		<h6>Watchers</h6>
+		{% for watcher in watchers %}
+		<div>
+			{{ watcher}}
+		</div>
+		{% empty %}
+		There are no watchers.
+		{% endfor %}
 
 	</div>
 

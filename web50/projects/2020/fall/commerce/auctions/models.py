@@ -26,6 +26,8 @@ class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    watchers = models.ManyToManyField(
+        User, blank=True, related_name="listings")
 
     def __str__(self):
         return f"{self.title} listed for: {self.starting_bid}"
@@ -49,3 +51,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user_id} commented {self.comment}"
+
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user} is watching {self.listing}"

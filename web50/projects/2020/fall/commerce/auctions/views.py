@@ -113,10 +113,25 @@ def listing(request, listing_id):
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "comments": comments
+        "comments": comments,
+        "watchers": listing.watchers.all()
     })
 
 
 def comment(request):
     if request.method == "POST":
         new_comment = request.POST["comment"]
+
+
+def watchlist(request, listing_id):
+    # print(listing_id)
+    if request.method == "POST":
+        # print(listing_id)
+        listing = Listing.objects.get(pk=listing_id)
+        watcher = request.user
+        listing.watchers.add(watcher)
+
+        # return render(request, "auctions/index.html", {
+        #     "listings": Listing.objects.filter(is_active=True)
+        # })
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
