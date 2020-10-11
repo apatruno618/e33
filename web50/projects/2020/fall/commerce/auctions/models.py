@@ -18,7 +18,8 @@ class Listing(models.Model):
     description = models.CharField(max_length=200)
     starting_bid = models.DecimalField(max_digits=8, decimal_places=2)
     photo_link = models.URLField()
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category_id = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="listings")
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField()
 

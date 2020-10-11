@@ -3,14 +3,17 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.forms import ModelForm
 
 # from .models import Bid, Comment, Listing, User
 from .models import Comment, Listing, User
 
-# class NewTaskForm(forms.Form):
-#     title = forms.CharField(label="Title")
-#     description = forms.CharField(widget=forms.Textarea)
-# 	starting_bid = forms.
+
+class ListingForm(ModelForm):
+    class Meta:
+        model = Listing
+        # fields = ['title', 'description', 'starting bid', 'photo link']
+        fields = '__all__'
 
 
 def index(request):
@@ -85,7 +88,9 @@ def create(request):
 
             return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/create.html")
+        return render(request, "auctions/create.html", {
+            'form': ListingForm()
+        })
 
 
 def listing(request, listing_id):

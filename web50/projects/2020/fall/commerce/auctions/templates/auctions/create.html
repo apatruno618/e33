@@ -9,6 +9,7 @@ Create Listing
 
 <form action="{% url 'create' %}" method="POST">
 	{% csrf_token %}
+	{{ form }}
 	<input type="text" name="title" , placeholder="Title">
 	<input type="text" name="description" placeholder="Description">
 	<input type="number" name="starting_bid" placeholder="Starting bid">
