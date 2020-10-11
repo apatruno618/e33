@@ -10,10 +10,10 @@ Create Listing
 <form action="{% url 'create' %}" method="POST">
 	{% csrf_token %}
 	{{ form }}
-	<input type="text" name="title" , placeholder="Title">
+	<!-- <input type="text" name="title" , placeholder="Title">
 	<input type="text" name="description" placeholder="Description">
 	<input type="number" name="starting_bid" placeholder="Starting bid">
-	<input type="url" name="photo_link" placeholder="Photo Link">
+	<input type="url" name="photo_link" placeholder="Photo Link"> -->
 	<!-- <input type="text" , name="category" placeholder="Category"> -->
 	<input class="btn btn-primary" type="submit">
 </form>

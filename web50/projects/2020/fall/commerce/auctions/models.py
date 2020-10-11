@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+# blank=True, null=True
+
 
 class User(AbstractUser):
     pass
@@ -17,11 +19,13 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=200)
     starting_bid = models.DecimalField(max_digits=8, decimal_places=2)
-    photo_link = models.URLField()
-    category_id = models.ForeignKey(
+    # optional field
+    photo_link = models.URLField(blank=True, null=True)
+    category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="listings")
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_created = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.title} listed for: {self.starting_bid}"

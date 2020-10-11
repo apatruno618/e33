@@ -4,21 +4,26 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import ModelForm
+from django import forms
 
 # from .models import Bid, Comment, Listing, User
 from .models import Comment, Listing, User
 
 
 class ListingForm(ModelForm):
+    # category = forms.CharField(initial="none")
+
     class Meta:
         model = Listing
-        # fields = ['title', 'description', 'starting bid', 'photo link']
-        fields = '__all__'
+        # fields = ['title', 'description', 'starting_bid', 'photo_link']
+        # fields = '__all__'
+        exclude = ['user', 'is_active', 'date_created']
 
 
 def index(request):
+    # displays active listings only
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
+        "listings": Listing.objects.filter(is_active=True)
     })
 
 
@@ -76,18 +81,26 @@ def register(request):
 
 def create(request):
     if request.method == "POST":
-        if request.POST.get('title') and request.POST.get('description') and request.POST.get('starting_bid'):
+        # if request.POST.get('title') and request.POST.get('description') and request.POST.get('starting_bid'):
 
-            title = request.POST["title"]
-            description = request.POST["description"]
-            starting_bid = int(request.POST["starting_bid"])
-            photo_link = request.POST["photo_link"]
-            # category = request.POST["category"]
-            listing = Listing.save(
-                title, description, starting_bid, photo_link)
+        #     title = request.POST["title"]
+        #     description = request.POST["description"]
+        #     starting_bid = int(request.POST["starting_bid"])
+        #     photo_link = request.POST["photo_link"]
+        #     # category = request.POST["category"]
+        #     listing = Listing.save(
+        #         title, description, starting_bid, photo_link)
 
+        #     return HttpResponseRedirect(reverse("index"))
+        form = ListingForm(request.POST)
+        if form.is_valid:
+            listing = form.save(commit=False)
+            listing.user = request.user
+            form.save()
             return HttpResponseRedirect(reverse("index"))
+
     else:
+        print(request.user)
         return render(request, "auctions/create.html", {
             'form': ListingForm()
         })
