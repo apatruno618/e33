@@ -8,7 +8,7 @@ Listing
 <div>
 	<h2>Listing: {{ listing.title }}</h2>
 	{% if user.is_authenticated %}
-	<form action="{% url 'watchlist' listing.id %}" method="POST">
+	<form action="{% url 'watch_add' listing.id %}" method="POST">
 		{% csrf_token %}
 		<input class="btn btn-primary" type="submit" value="Watchlist">
 	</form>
@@ -23,17 +23,17 @@ Listing
 		<h6>Comments</h6>
 		{% for comment in comments %}
 		<div>
-			{{ comment.comment}}
-			{{ comment.user_id}}
+			{{ comment.text}}
+			{{ comment.user}}
 			{{ comment.date_created}}
 		</div>
 		{% empty %}
 		There are no comments.
 		{% endfor %}
 		{% if user.is_authenticated %}
-		<form action="{% url 'comment' %}" method="POST">
+		<form action="{% url 'comment' listing.id %}" method="POST">
 			{% csrf_token %}
-			<input type="text" name="comment" placeholder="New comment">
+			<input type="text" name="text" placeholder="New comment">
 			<input class="btn btn-primary" type="submit">
 		</form>
 		{% endif %}
