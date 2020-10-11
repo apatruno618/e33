@@ -8,14 +8,14 @@ Listing
 <div>
 	<h2>Listing: {{ listing.title }}</h2>
 	{% if user.is_authenticated %}
-	<form action="{% url 'watch_add' listing.id %}" method="POST">
+	<form action="{% url 'watch' listing.id %}" method="POST">
 		{% csrf_token %}
-		<input class="btn btn-primary" type="submit" value="Watchlist">
+		<input class="btn btn-primary" type="submit" value="Add/Remove from Watchlist">
 	</form>
 	{% endif %}
 	<div>
 		<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
-		<div>{{ listing.description }}</div>
+		<div>Description: {{ listing.description }}</div>
 		<div>Current Price: ${{ listing.starting_bid }}</div>
 		<div>Created: {{ listing.date_created }}</div>
 	</div>

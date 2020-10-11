@@ -17,7 +17,7 @@ class ListingForm(ModelForm):
         model = Listing
         # fields = ['title', 'description', 'starting_bid', 'photo_link']
         # fields = '__all__'
-        exclude = ['user', 'is_active', 'date_created']
+        exclude = ['user', 'is_active', 'date_created', 'watchers']
 
 
 def index(request):
@@ -100,7 +100,7 @@ def create(request):
             return HttpResponseRedirect(reverse("index"))
 
     else:
-        print(request.user)
+        # print(request.user)
         return render(request, "auctions/create.html", {
             'form': ListingForm()
         })
@@ -131,14 +131,21 @@ def comment(request, listing_id):
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
 
-def watch_add(request, listing_id):
-    # print(listing_id)
+def watch(request, listing_id):
     if request.method == "POST":
-        # print(listing_id)
         listing = Listing.objects.get(pk=listing_id)
         watcher = request.user
-        listing.watchers.add(watcher)
-
+        # listing.watchers.add(watcher)
+        try:
+            is_watching = watcher.listings.get()
+            listing.watchers.remove(watcher)
+        except:
+            listing.watchers.add(watcher)
+        # print(is_watching)
+        # if is_watching:
+        #     listing.watchers.remove(watcher)
+        # else:
+        #     listing.watchers.add(watcher)
         # return render(request, "auctions/index.html", {
         #     "listings": Listing.objects.filter(is_active=True)
         # })
