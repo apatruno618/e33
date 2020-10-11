@@ -17,7 +17,23 @@ Listing
 		<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
 		<div>Description: {{ listing.description }}</div>
 		<div>Current Price: ${{ listing.starting_bid }}</div>
-		<div>Created: {{ listing.date_created }}</div>
+		{% if messages %}
+		{% for message in messages %}
+		{{ message }}
+		{% endfor %}
+		{% endif %}
+		{% if user.is_authenticated %}
+		<form action="{% url 'bid' listing.id %}" method="POST">
+			{% csrf_token %}
+			<input type="number" min="0.01" step="0.01" name="bid" placeholder="Bid">
+			<input class="btn btn-primary" type="submit" value="Place Bid">
+		</form>
+		{% endif %}
+	</div>
+	<div>
+		<h6>Details</h6>
+		<div>Listed By: {{listing.user}}</div>
+		<div>Created On: {{ listing.date_created }}</div>
 	</div>
 	<div>
 		<h6>Comments</h6>

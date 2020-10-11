@@ -34,8 +34,8 @@ class Listing(models.Model):
 
 
 class Bid(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     bid = models.DecimalField(max_digits=8, decimal_places=2)
     date_created = models.DateTimeField(auto_now=True)
 

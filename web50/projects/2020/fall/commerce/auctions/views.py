@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -7,7 +8,7 @@ from django.forms import ModelForm
 from django import forms
 
 # from .models import Bid, Comment, Listing, User
-from .models import Comment, Listing, User
+from .models import Bid, Comment, Listing, User
 
 
 class ListingForm(ModelForm):
@@ -135,20 +136,11 @@ def watch(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
         watcher = request.user
-        # listing.watchers.add(watcher)
         try:
             is_watching = watcher.listings.get()
             listing.watchers.remove(watcher)
         except:
             listing.watchers.add(watcher)
-        # print(is_watching)
-        # if is_watching:
-        #     listing.watchers.remove(watcher)
-        # else:
-        #     listing.watchers.add(watcher)
-        # return render(request, "auctions/index.html", {
-        #     "listings": Listing.objects.filter(is_active=True)
-        # })
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
 
@@ -158,3 +150,28 @@ def watchlist(request):
     return render(request, "auctions/index.html", {
         "listings": listings
     })
+
+
+def bid(request, listing_id):
+    if request.method == "POST":
+        bidder = request.user
+        bid = float(request.POST["bid"])
+        listing = Listing.objects.get(pk=listing_id)
+        highest_bid = Bid.objects.filter(
+            listing=listing_id).order_by('-bid')[0]
+        if bid >= listing.starting_bid:
+            # print("bid is greater than starting bid")
+            if bid > highest_bid.bid:
+                new_bid = Bid()
+                new_bid.user = bidder
+                new_bid.listing = listing
+                new_bid.bid = bid
+                new_bid.save()
+                print("saved")
+                messages.success(request, "Your bid was accepted!")
+                return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+        else:
+            messages.error(
+                request, "Your bid was too low. Please place a higher bid.")
+            return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
