@@ -144,12 +144,11 @@ def bid(request, listing_id):
         bidder = request.user
         bid = float(request.POST["bid"])
         listing = Listing.objects.get(pk=listing_id)
-        # gets the highest current bid
-        highest_bid = Bid.objects.filter(
-            listing=listing_id).order_by('-bid')[0]
-        # checks if the bid is higher than the starting bid
-        if bid >= listing.starting_bid:
-            # checks if bid is higher than the highest bid
+        try:
+            # gets the highest current bid
+            highest_bid = Bid.objects.filter(
+                listing=listing_id).order_by('-bid')[0]
+            # save the new bid if its higher than the highest bid
             if bid > highest_bid.bid:
                 new_bid = Bid()
                 new_bid.user = bidder
@@ -157,12 +156,20 @@ def bid(request, listing_id):
                 new_bid.bid = bid
                 new_bid.save()
                 messages.success(request, "Your bid was accepted!")
-
-        # otherwise bid did not meet critera
-        else:
-            messages.error(
-                request, "Your bid was too low. Please place a higher bid.")
-        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+        # there's no bid in the bid table
+        except IndexError:
+            # save the new bid if its higher than the starting bid
+            if bid > listing.starting_bid:
+                new_bid = Bid()
+                new_bid.user = bidder
+                new_bid.listing = listing
+                new_bid.bid = bid
+                new_bid.save()
+                messages.success(request, "Your bid was accepted!")
+            else:
+                messages.error(
+                    request, "Your bid was too low. Please place a higher bid.")
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
 
 def categories(request):
