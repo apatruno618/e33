@@ -7,17 +7,13 @@ from django.urls import reverse
 from django.forms import ModelForm
 from django import forms
 
-# from .models import Bid, Comment, Listing, User
-from .models import Bid, Comment, Listing, User
+from .models import Bid, Category, Comment, Listing, User
 
 
 class ListingForm(ModelForm):
-    # category = forms.CharField(initial="none")
-
+    # form for creating a new listing
     class Meta:
         model = Listing
-        # fields = ['title', 'description', 'starting_bid', 'photo_link']
-        # fields = '__all__'
         exclude = ['user', 'is_active', 'date_created', 'watchers']
 
 
@@ -82,26 +78,16 @@ def register(request):
 
 def create(request):
     if request.method == "POST":
-        # if request.POST.get('title') and request.POST.get('description') and request.POST.get('starting_bid'):
-
-        #     title = request.POST["title"]
-        #     description = request.POST["description"]
-        #     starting_bid = int(request.POST["starting_bid"])
-        #     photo_link = request.POST["photo_link"]
-        #     # category = request.POST["category"]
-        #     listing = Listing.save(
-        #         title, description, starting_bid, photo_link)
-
-        #     return HttpResponseRedirect(reverse("index"))
+        # get form contents
         form = ListingForm(request.POST)
         if form.is_valid:
+            # soft safe
             listing = form.save(commit=False)
             listing.user = request.user
             form.save()
             return HttpResponseRedirect(reverse("index"))
 
     else:
-        # print(request.user)
         return render(request, "auctions/create.html", {
             'form': ListingForm()
         })
@@ -110,25 +96,24 @@ def create(request):
 def listing(request, listing_id):
     # find the listing by its id
     listing = Listing.objects.get(pk=listing_id)
+    # get comments related to the listing
     comments = Comment.objects.filter(listing_id=listing_id)
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "comments": comments,
-        "watchers": listing.watchers.all()
+        "comments": comments
     })
 
 
 def comment(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
+        # creates and saves new comment
         comment = Comment()
         comment.user = request.user
         comment.listing = listing
         comment.text = request.POST["text"]
         comment.save()
-        # Comment.save(user=user, listing=listing_id,
-        #              text=request.POST["text"])
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
 
@@ -136,9 +121,11 @@ def watch(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
         watcher = request.user
+        # removes listing from watchlist if it exists
         try:
             is_watching = watcher.listings.get()
             listing.watchers.remove(watcher)
+        # otherwise adds it to watchlist
         except:
             listing.watchers.add(watcher)
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
@@ -157,21 +144,38 @@ def bid(request, listing_id):
         bidder = request.user
         bid = float(request.POST["bid"])
         listing = Listing.objects.get(pk=listing_id)
+        # gets the highest current bid
         highest_bid = Bid.objects.filter(
             listing=listing_id).order_by('-bid')[0]
+        # checks if the bid is higher than the starting bid
         if bid >= listing.starting_bid:
-            # print("bid is greater than starting bid")
+            # checks if bid is higher than the highest bid
             if bid > highest_bid.bid:
                 new_bid = Bid()
                 new_bid.user = bidder
                 new_bid.listing = listing
                 new_bid.bid = bid
                 new_bid.save()
-                print("saved")
                 messages.success(request, "Your bid was accepted!")
-                return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
 
+        # otherwise bid did not meet critera
         else:
             messages.error(
                 request, "Your bid was too low. Please place a higher bid.")
-            return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        "categories": Category.objects.all()
+    })
+
+
+def category(request, category_id):
+    print(category_id)
+    # return render(request, "auctions/categories.html", {
+    #     "categories": Category.objects.all()
+    # })
+    return render(request, "auctions/index.html", {
+        "listings": Listing.objects.filter(category=category_id)
+    })

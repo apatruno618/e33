@@ -14,7 +14,7 @@ Listing
 	</form>
 	{% endif %}
 	<div>
-		<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
+		<img class="image" src="{{ listing.photo_link }}" alt="{{ listing.title }}">
 		<div>Description: {{ listing.description }}</div>
 		<div>Current Price: ${{ listing.starting_bid }}</div>
 		{% if messages %}
@@ -30,19 +30,22 @@ Listing
 		</form>
 		{% endif %}
 	</div>
+	<br>
 	<div>
 		<h6>Details</h6>
 		<div>Listed By: {{listing.user}}</div>
 		<div>Created On: {{ listing.date_created }}</div>
 	</div>
+	<br>
 	<div>
 		<h6>Comments</h6>
 		{% for comment in comments %}
 		<div>
-			{{ comment.text}}
-			{{ comment.user}}
-			{{ comment.date_created}}
+			{{ comment.text}}<br>
+			Submitted by: {{ comment.user}}
+			on {{ comment.date_created}}
 		</div>
+		<br>
 		{% empty %}
 		There are no comments.
 		{% endfor %}
@@ -53,15 +56,6 @@ Listing
 			<input class="btn btn-primary" type="submit">
 		</form>
 		{% endif %}
-
-		<h6>Watchers</h6>
-		{% for watcher in watchers %}
-		<div>
-			{{ watcher}}
-		</div>
-		{% empty %}
-		There are no watchers.
-		{% endfor %}
 
 	</div>
 

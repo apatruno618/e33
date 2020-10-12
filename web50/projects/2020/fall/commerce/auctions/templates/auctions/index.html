@@ -6,13 +6,13 @@
 	{% for listing in listings %}
 	<div>
 		<a href="{% url 'listing' listing.id %}">
-			<img src="{{ listing.photo_link }}" alt="{{ listing.title }}">
+			<img class="images" src="{{ listing.photo_link }}" alt="{{ listing.title }}">
 			<h6>{{ listing.title }}</h6>
 			{{ listing.description }}
 			${{ listing.starting_bid }}
 			Created: {{ listing.date_created }}
 		</a>
-	</div>
+	</div><br>
 
 	{% empty %}
 	There are no active listings.
