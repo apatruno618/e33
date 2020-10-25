@@ -71,7 +71,6 @@ function compose_email() {
 
 function load_mailbox(mailbox) {
 	// Show the mailbox and hide other views
-	console.log(mailbox);
 	document.querySelector('#emails-view').style.display = 'block';
 	document.querySelector('#compose-view').style.display = 'none';
 
@@ -79,25 +78,44 @@ function load_mailbox(mailbox) {
 	// document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><ul id="emails"></ul>`;
 	// document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><table id="emails"><tr><th id="recipients">To</th><th id="subject">Subject</th><th id="timestamp">Sent</th></tr></table>`;
 	document.querySelector('#email-header').innerHTML = `${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}`;
-
+	// document.querySelector('#my-table').innerHTML = ''
+	document.querySelector('#emails').innerHTML = ''
 
 	fetch('/emails/' + mailbox)
 		.then(response => response.json())
 		.then(emails => {
-			// const emailList = document.createElement('#emails');
-			// Find a <table> element with id="myTable":
-			var table = document.getElementById("myTable");
+			// Find parent container
+			const parentContainer = document.getElementById("emails");
+			console.log(emails);
 			emails.forEach(item => {
-				// const emailRow = document.createElement('tr')
-				let rowNumber = 0;
-				const emailRow = table.insertRow(rowNumber);
-				const senderField = emailRow.insertCell(0);
-				senderField.innerHTML = item.sender;
-				const subjectField = emailRow.insertCell(1);
-				subjectField.innerHTML = item.subject;
-				const timestampField = emailRow.insertCell(2);
-				timestampField.innerHTML = item.timestamp;
-				rowNumber++;
+				const emailContainer = document.createElement('div');
+				emailContainer.style.display = "flex";
+				emailContainer.style.borderStyle = "solid";
+				emailContainer.style.borderWidth = "1px";
+				emailContainer.style.borderColor = "black";
+				emailContainer.style.padding = "5px";
+				parentContainer.append(emailContainer);
+				const read = item.read;
+				if (read == true) {
+					// Email was read
+					emailContainer.style.backgroundColor = "gray";
+				} else {
+					// Email was not read
+					emailContainer.style.backgroundColor = "white";
+				}
+				show_email(emailContainer, item.sender);
+				show_email(emailContainer, item.subject);
+				show_email(emailContainer, item.timestamp);
 			});
 		});
+}
+
+function show_email(parentContainer, field) {
+	const emailFieldContainer = document.createElement('div');
+	emailFieldContainer.innerHTML = field;
+	parentContainer.append(emailFieldContainer);
+	emailFieldContainer.style.margin = "0px 25px 0px";
+	// if (field == timestamp) {
+	// 	emailFieldContainer.style.alignSelf = "right";
+	// }
 }
