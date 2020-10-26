@@ -29,9 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			})
 		})
 			// Load the user's sent mailbox
-			.then(function () {
-				load_mailbox('sent')
-			})
+			.then(() => { load_mailbox('sent') })
 	};
 
 });
@@ -40,6 +38,7 @@ function compose_email() {
 
 	// Show compose view and hide other views
 	document.querySelector('#emails-view').style.display = 'none';
+	document.querySelector('#email-view').style.display = 'none';
 	document.querySelector('#compose-view').style.display = 'block';
 
 	// Clear out composition fields
@@ -52,6 +51,7 @@ function load_mailbox(mailbox) {
 	// Show the mailbox and hide other views
 	document.querySelector('#emails-view').style.display = 'block';
 	document.querySelector('#compose-view').style.display = 'none';
+	document.querySelector('#email-view').style.display = 'none';
 
 	// Show the mailbox name
 	// document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><ul id="emails"></ul>`;
@@ -88,10 +88,6 @@ function load_mailbox(mailbox) {
 				list_email(emailContainer, item.sender);
 				list_email(emailContainer, item.subject);
 				list_email(emailContainer, item.timestamp);
-
-				// If the contents of an email need to be viewed
-				// emailContainer.onclick = alert(`you clicked email ${item.id}`)
-				// document.querySelector(`#${id}`).addEventListener('click', alert(`you clicked email ${item.id}`));
 			});
 		});
 }
@@ -107,13 +103,26 @@ function list_email(parentContainer, field) {
 }
 
 function show_email(emailId) {
-	console.log(emailId);
-	fetch('/emails/100')
+	// Show the email and hide other views
+	document.querySelector('#emails-view').style.display = 'none';
+	document.querySelector('#compose-view').style.display = 'none';
+	document.querySelector('#email-view').style.display = 'block';
+
+	fetch('/emails/' + emailId)
 		.then(response => response.json())
 		.then(email => {
-			// Print email
-			console.log(email);
+			document.querySelector('#sender').innerHTML = `From: ${email.sender}`;
+			document.querySelector('#recipients').innerHTML = `To: ${email.recipients}`;
+			document.querySelector('#subject').innerHTML = `Subject: ${email.subject}`;
+			document.querySelector('#timestamp').innerHTML = `Timestamp: ${email.timestamp}`;
+			document.querySelector('#email-body').innerHTML = `${email.body}`;
+		})
 
-			// ... do something else with email ...
-		});
+	fetch('/emails/' + emailId, {
+		method: 'PUT',
+		body: JSON.stringify({
+			read: true
+		})
+	})
+
 }
