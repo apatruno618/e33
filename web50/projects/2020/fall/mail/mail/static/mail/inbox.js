@@ -30,28 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		})
 			// Load the user's sent mailbox
 			.then(function () {
-				// 	fetch('/emails/sent')
-				// 		.then(response => response.json())
-				// 		.then(emails => {
 				load_mailbox('sent')
-				// 			const emailList = document.querySelector('#emails');
-
-				// 			sortedEmails.forEach(item => {
-				// 				const recipients = item.recipients;
-				// 				const subject = item.subject;
-				// 				const timestamp = item.timestamp;
-				// 				const recipientField = document.createElement('td');
-				// 				recipientField.innerHTML = recipients;
-				// 				emailList.append(recipientField);
-				// 				const subjectField = document.createElement('td');
-				// 				subjectField.innerHTML = subject;
-				// 				emailList.append(subjectField);
-				// 				const timestampField = document.createElement('td');
-				// 				timestampField.innerHTML = timestamp;
-				// 				// let emailview = document.querySelector('#emails-view')
-				// 				emailList.append(timestampField);
-				// 			});
-				// 		})
 			})
 	};
 
@@ -79,16 +58,19 @@ function load_mailbox(mailbox) {
 	// document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><table id="emails"><tr><th id="recipients">To</th><th id="subject">Subject</th><th id="timestamp">Sent</th></tr></table>`;
 	document.querySelector('#email-header').innerHTML = `${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}`;
 	// document.querySelector('#my-table').innerHTML = ''
-	document.querySelector('#emails').innerHTML = ''
+	document.querySelector('#emails').innerHTML = '';
+
 
 	fetch('/emails/' + mailbox)
 		.then(response => response.json())
 		.then(emails => {
 			// Find parent container
 			const parentContainer = document.getElementById("emails");
-			console.log(emails);
+			// console.log(emails);
 			emails.forEach(item => {
 				const emailContainer = document.createElement('div');
+				// emailContainer.setAttribute("id", item.id);
+				emailContainer.addEventListener('click', () => show_email(item.id));
 				emailContainer.style.display = "flex";
 				emailContainer.style.borderStyle = "solid";
 				emailContainer.style.borderWidth = "1px";
@@ -103,14 +85,18 @@ function load_mailbox(mailbox) {
 					// Email was not read
 					emailContainer.style.backgroundColor = "white";
 				}
-				show_email(emailContainer, item.sender);
-				show_email(emailContainer, item.subject);
-				show_email(emailContainer, item.timestamp);
+				list_email(emailContainer, item.sender);
+				list_email(emailContainer, item.subject);
+				list_email(emailContainer, item.timestamp);
+
+				// If the contents of an email need to be viewed
+				// emailContainer.onclick = alert(`you clicked email ${item.id}`)
+				// document.querySelector(`#${id}`).addEventListener('click', alert(`you clicked email ${item.id}`));
 			});
 		});
 }
 
-function show_email(parentContainer, field) {
+function list_email(parentContainer, field) {
 	const emailFieldContainer = document.createElement('div');
 	emailFieldContainer.innerHTML = field;
 	parentContainer.append(emailFieldContainer);
@@ -118,4 +104,16 @@ function show_email(parentContainer, field) {
 	// if (field == timestamp) {
 	// 	emailFieldContainer.style.alignSelf = "right";
 	// }
+}
+
+function show_email(emailId) {
+	console.log(emailId);
+	fetch('/emails/100')
+		.then(response => response.json())
+		.then(email => {
+			// Print email
+			console.log(email);
+
+			// ... do something else with email ...
+		});
 }
