@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		// Prevent default submission
 		event.preventDefault();
 
-		// Get the contents of the email
+		// Gets the contents of the email
 		const recipients = document.querySelector('#compose-recipients').value;
 		const subject = document.querySelector('#compose-subject').value;
 		const body = document.querySelector('#compose-body').value;
 
-		// Save the email via API
+		// Saves the email via API
 		fetch('/emails', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			})
 		})
 			// Load the user's sent mailbox
-			.then(() => { load_mailbox('sent') })
+			.then(() => load_mailbox('sent'))
 	};
 
 });
@@ -69,13 +69,14 @@ function load_mailbox(mailbox) {
 			// console.log(emails);
 			emails.forEach(item => {
 				const emailContainer = document.createElement('div');
-				// emailContainer.setAttribute("id", item.id);
-				emailContainer.addEventListener('click', () => show_email(item.id));
+				// Displays content of email when clicked
+				emailContainer.addEventListener('click', () => showEmail(item.id));
 				emailContainer.style.display = "flex";
 				emailContainer.style.borderStyle = "solid";
 				emailContainer.style.borderWidth = "1px";
 				emailContainer.style.borderColor = "black";
 				emailContainer.style.padding = "5px";
+				// Adds each email line to the parent div
 				parentContainer.append(emailContainer);
 				const read = item.read;
 				if (read == true) {
@@ -85,29 +86,29 @@ function load_mailbox(mailbox) {
 					// Email was not read
 					emailContainer.style.backgroundColor = "white";
 				}
-				list_email(emailContainer, item.sender);
-				list_email(emailContainer, item.subject);
-				list_email(emailContainer, item.timestamp);
+				// Appends fields to each email line
+				addEmailField(emailContainer, item.sender);
+				addEmailField(emailContainer, item.subject);
+				addEmailField(emailContainer, item.timestamp);
 			});
 		});
 }
 
-function list_email(parentContainer, field) {
+function addEmailField(parentContainer, field) {
+	// Creates parent container of each field
 	const emailFieldContainer = document.createElement('div');
 	emailFieldContainer.innerHTML = field;
 	parentContainer.append(emailFieldContainer);
 	emailFieldContainer.style.margin = "0px 25px 0px";
-	// if (field == timestamp) {
-	// 	emailFieldContainer.style.alignSelf = "right";
-	// }
 }
 
-function show_email(emailId) {
+function showEmail(emailId) {
 	// Show the email and hide other views
 	document.querySelector('#emails-view').style.display = 'none';
 	document.querySelector('#compose-view').style.display = 'none';
 	document.querySelector('#email-view').style.display = 'block';
 
+	// Finds email contents based on its id
 	fetch('/emails/' + emailId)
 		.then(response => response.json())
 		.then(email => {
@@ -117,11 +118,13 @@ function show_email(emailId) {
 			document.querySelector('#timestamp').innerHTML = `Timestamp: ${email.timestamp}`;
 			document.querySelector('#email-body').innerHTML = `${email.body}`;
 			const archiveButton = document.querySelector('#archive');
+			// Decides content of archive button
 			if (email.archived == true) {
 				archiveButton.innerHTML = "Unarchive";
 			} else {
 				archiveButton.innerHTML = "Archive";
 			}
+			// Updates read status
 			if (email.read == false) {
 				fetch('/emails/' + emailId, {
 					method: 'PUT',
@@ -134,7 +137,7 @@ function show_email(emailId) {
 			// console.log(archiveStatus);
 			// console.log(document.querySelector('#archive').innerHTML);
 			document.querySelector('#archive').addEventListener('click', () => setArchive(email.id, archiveStatus));
-			document.querySelector('#reply').addEventListener('click', () => prefill_email(email.sender, email.subject, email.timestamp, email.body));
+			document.querySelector('#reply').addEventListener('click', () => preFillComposeEmail(email.sender, email.subject, email.timestamp, email.body));
 		})
 };
 
@@ -154,7 +157,7 @@ function setArchive(emailId, archiveStatus) {
 	}).then(() => load_mailbox('inbox'))
 };
 
-function prefill_email(sender, subject, timestamp, body) {
+function preFillComposeEmail(sender, subject, timestamp, body) {
 	// Show compose view and hide other views
 	document.querySelector('#emails-view').style.display = 'none';
 	document.querySelector('#email-view').style.display = 'none';
