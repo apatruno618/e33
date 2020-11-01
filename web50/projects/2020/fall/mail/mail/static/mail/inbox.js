@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
+	// In case the user needs to archive the email
+	let archiveEmailId;
 
 	// Use buttons to toggle between views
 	document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
 	document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
 	document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
 	document.querySelector('#compose').addEventListener('click', compose_email);
+	// Ensures this only fires
+	document.querySelector('#archive').addEventListener('click', () => setArchive());
 
 	// By default, load the inbox
 	load_mailbox('inbox');
@@ -30,8 +34,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		})
 			// Load the user's sent mailbox
 			.then(() => load_mailbox('sent'))
+			// Catch any errors and log them to the console
+			.catch(error => {
+				console.log('Error:', error);
+			});
 	};
-
 });
 
 function compose_email() {
@@ -54,12 +61,9 @@ function load_mailbox(mailbox) {
 	document.querySelector('#email-view').style.display = 'none';
 
 	// Show the mailbox name
-	// document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><ul id="emails"></ul>`;
-	// document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><table id="emails"><tr><th id="recipients">To</th><th id="subject">Subject</th><th id="timestamp">Sent</th></tr></table>`;
 	document.querySelector('#email-header').innerHTML = `${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}`;
-	// document.querySelector('#my-table').innerHTML = ''
+	// Clear previously shown emails
 	document.querySelector('#emails').innerHTML = '';
-
 
 	fetch('/emails/' + mailbox)
 		.then(response => response.json())
@@ -79,7 +83,7 @@ function load_mailbox(mailbox) {
 				// Adds each email line to the parent div
 				parentContainer.append(emailContainer);
 				const read = item.read;
-				if (read == true) {
+				if (read) {
 					// Email was read
 					emailContainer.style.backgroundColor = "gray";
 				} else {
@@ -91,6 +95,10 @@ function load_mailbox(mailbox) {
 				addEmailField(emailContainer, item.subject);
 				addEmailField(emailContainer, item.timestamp);
 			});
+		})
+		// Catch any errors and log them to the console
+		.catch(error => {
+			console.log('Error:', error);
 		});
 }
 
@@ -103,10 +111,14 @@ function addEmailField(parentContainer, field) {
 }
 
 function showEmail(emailId) {
+
 	// Show the email and hide other views
 	document.querySelector('#emails-view').style.display = 'none';
 	document.querySelector('#compose-view').style.display = 'none';
 	document.querySelector('#email-view').style.display = 'block';
+
+	// In case the user decides to archive
+	archiveEmailId = emailId;
 
 	// Finds email contents based on its id
 	fetch('/emails/' + emailId)
@@ -119,13 +131,13 @@ function showEmail(emailId) {
 			document.querySelector('#email-body').innerHTML = `${email.body}`;
 			const archiveButton = document.querySelector('#archive');
 			// Decides content of archive button
-			if (email.archived == true) {
+			if (email.archived === true) {
 				archiveButton.innerHTML = "Unarchive";
 			} else {
 				archiveButton.innerHTML = "Archive";
 			}
 			// Updates read status
-			if (email.read == false) {
+			if (email.read === false) {
 				fetch('/emails/' + emailId, {
 					method: 'PUT',
 					body: JSON.stringify({
@@ -133,28 +145,36 @@ function showEmail(emailId) {
 					})
 				})
 			}
-			const archiveStatus = document.querySelector('#archive').innerHTML.toLowerCase();
-			// console.log(archiveStatus);
-			// console.log(document.querySelector('#archive').innerHTML);
-			document.querySelector('#archive').addEventListener('click', () => setArchive(email.id, archiveStatus));
+			// Pre-fills the email form
 			document.querySelector('#reply').addEventListener('click', () => preFillComposeEmail(email.sender, email.subject, email.timestamp, email.body));
 		})
+		// Catch any errors and log them to the console
+		.catch(error => {
+			console.log('Error:', error);
+		});
 };
 
-function setArchive(emailId, archiveStatus) {
+// Updates the archive status
+function setArchive() {
+	let archiveStatus = document.querySelector('#archive').innerHTML;
 	let archiveBool;
-	console.log(archiveBool);
-	if (archiveStatus == 'archive') {
+
+	if (archiveStatus === 'Archive') {
 		archiveBool = true
 	} else {
 		archiveBool = false
 	}
-	fetch('/emails/' + emailId, {
+	// Updates db
+	fetch('/emails/' + archiveEmailId, {
 		method: 'PUT',
 		body: JSON.stringify({
 			archived: archiveBool
 		})
 	}).then(() => load_mailbox('inbox'))
+		// Catch any errors and log them to the console
+		.catch(error => {
+			console.log('Error:', error);
+		});
 };
 
 function preFillComposeEmail(sender, subject, timestamp, body) {
