@@ -1,5 +1,21 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    TODO
+{% if user.is_authenticated %}
+<div id="compose-view">
+	<h3>New Post</h3>
+	<form id="compose-form">
+		<div class="form-group">
+			From: <input disabled class="form-control" value="{{ request.user.email }}">
+		</div>
+		<textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+		<input type="submit" class="btn btn-primary" />
+	</form>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'network/social.js' %}"></script>
 {% endblock %}
