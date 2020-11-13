@@ -87,3 +87,16 @@ def compose(request):
     post.save()
 
     return JsonResponse({"message": "Post sent successfully."}, status=201)
+
+
+@login_required
+def allposts(request):
+
+    # Get posts from db
+    posts = Post.objects.all()
+
+    # Return posts in reverse chronologial order
+    # posts = posts.order_by("-timestamp").all()
+    print(posts)
+
+    return JsonResponse([post.serialize() for post in posts], safe=False)

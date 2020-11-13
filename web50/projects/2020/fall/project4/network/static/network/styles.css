@@ -1,3 +1,11 @@
 #compose-view {
 	margin: 2%;
 }
+
+#posts-view {
+	margin: 2%;
+}
+
+.card {
+	margin-top: 3px;
+}
