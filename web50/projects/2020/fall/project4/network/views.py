@@ -90,13 +90,26 @@ def compose(request):
 
 
 @login_required
-def allposts(request):
+def posts(request):
 
     # Get posts from db
     posts = Post.objects.all()
 
     # Return posts in reverse chronologial order
-    # posts = posts.order_by("-timestamp").all()
-    print(posts)
+    posts = posts.order_by("-timestamp").all()
+
+    return JsonResponse([post.serialize() for post in posts], safe=False)
+
+
+@login_required
+def profile(request, user):
+
+    # Get the user object to access id
+    userObject = User.objects.filter(username=user)
+    print(userObject[0].id)
+
+    posts = Post.objects.filter(user=userObject[0].id)
+
+    posts = posts.order_by("-timestamp").all()
 
     return JsonResponse([post.serialize() for post in posts], safe=False)
