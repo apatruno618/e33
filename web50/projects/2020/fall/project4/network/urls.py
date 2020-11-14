@@ -12,5 +12,7 @@ urlpatterns = [
     # API Routes
     path("posts", views.compose, name="compose"),
     path("posts/all", views.posts, name="posts"),
-    path("posts/<str:user>", views.profile, name="profile"),
+    path("posts/<str:user>", views.profile_posts, name="profile"),
+    path("followers/<str:user>", views.profile_followers, name="followers"),
+    path("following/<str:user>", views.profile_following, name="following"),
 ]

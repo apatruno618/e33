@@ -4,29 +4,6 @@
 {% block body %}
 {% if user.is_authenticated %}
 
-<div>
-	{% for post in posts %}
-	<div class="card">
-		<div class="card-body">
-			<h5 class="card-title">{{post.user}}</h5>
-			<p class="card-text">{{post.body}}</p>
-			<p>{{post.timestamp}}</p>
-		</div>
-	</div>
-
-	{% empty %}
-	There are no posts.
-	{% endfor %}
-
-	{% for follower in followers %}
-	{{follower}}
-	{% empty %}
-	There are no followers.
-	{% endfor %}
-
-</div>
-
-
 <div id="compose-view">
 	<h3>New Post</h3>
 	<form id="compose-form">
@@ -46,7 +23,9 @@
 </div>
 
 <div id="profile-view">
-	<h3>Profile</h3>
+	<h3 id="profile"></h3>
+	<div id="followers"></div>
+	<div id="following"></div>
 	<!-- container div -->
 	<div id="users-posts">
 	</div>
@@ -56,5 +35,5 @@
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'network/social.js' %}"></script>
+<script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

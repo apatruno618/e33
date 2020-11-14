@@ -12,21 +12,7 @@ from .models import User, Post
 
 def index(request):
 
-    # Get posts from db
-    posts = Post.objects.all()
-
-    # Return posts in reverse chronologial order
-    posts = posts.order_by("-timestamp").all()
-
-    users = User.objects.filter(id=2)
-    followers = users[0].follower.all()
-    for follower in followers.all():
-        print(follower)
-
-    return render(request, "network/index.html", {
-        "posts": posts,
-        "followers": followers
-    })
+    return render(request, "network/index.html")
 
 
 def login_view(request):
@@ -104,7 +90,6 @@ def compose(request):
     return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 
-@login_required
 def posts(request):
 
     # Get posts from db
@@ -117,7 +102,7 @@ def posts(request):
 
 
 @login_required
-def profile(request, user):
+def profile_posts(request, user):
 
     # Get the user object to access id
     userObject = User.objects.filter(username=user)
@@ -127,3 +112,30 @@ def profile(request, user):
     posts = posts.order_by("-timestamp").all()
 
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+
+def profile_followers(request, user):
+
+    # Get the user object to access id
+    userObject = User.objects.get(username=user)
+
+    # Get number of followers
+    followers = userObject.follower.count()
+
+    return JsonResponse(followers, safe=False)
+
+
+def profile_following(request, user):
+
+    # Get the user object to access id
+    userObject = User.objects.get(username=user)
+    # print(userObject)
+
+    # Get all the account this user is following
+    peopleFollowing = User.objects.filter(follower=userObject.id)
+    # print(peopleFollowing)
+
+    # Count the accounts
+    following = peopleFollowing.count()
+
+    return JsonResponse(following, safe=False)

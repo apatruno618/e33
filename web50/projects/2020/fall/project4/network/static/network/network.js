@@ -2,18 +2,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 	// Don't show any posts upon logging in
-	document.querySelector('#posts-view').style.display = 'none';
+	document.querySelector('#posts-view').style.display = 'block';
 	document.querySelector('#profile-view').style.display = 'none';
 
+	loadPosts()
+
 	// View all posts
-	document.querySelector('#allPosts').addEventListener('click', () => load_posts());
-
-	// Get user that was clicked on
-	const users = document.querySelectorAll('.card-title')
-	users.forEach(item => {
-		item.addEventListener('click', (event) => console.log(event.target.innerHTML))
-	})
-
+	document.querySelector('#allPosts').addEventListener('click', () => loadPosts());
 
 	// Submits a new post
 	document.querySelector('#compose-form').onsubmit = function () {
@@ -31,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			})
 		})
 			// Load all posts
-			.then(() => load_posts())
+			.then(() => loadPosts())
 			// Catch any errors and log them to the console
 			.catch(error => {
 				console.log('Error:', error);
@@ -40,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-function load_posts() {
+function loadPosts() {
 	// Show the applicable view
 	document.querySelector('#posts-view').style.display = 'block';
 	document.querySelector('#profile-view').style.display = 'none';
@@ -64,7 +59,7 @@ function load_posts() {
 				const postFieldContainer = document.createElement('div');
 				postCardBody.append(postFieldContainer);
 				postFieldContainer.style.margin = "0px 25px 0px";
-				addPostField(postCardBody, "h5", post.user, "card-title");
+				addPostField(postCardBody, "a", post.user, "card-title");
 				addPostField(postCardBody, "p", post.body, "card-text");
 				addPostField(postCardBody, "span", post.timestamp, "card-text");
 
@@ -82,12 +77,11 @@ function addPostField(parentContainer, element, field, className) {
 	const postFieldContainer = document.createElement(element);
 	postFieldContainer.innerHTML = field;
 	postFieldContainer.className = className;
-	console.log(field);
 
 	// Add event listener to usernames in case we want to see their profile
 	if (className === "card-title") {
-		let username = field
-		postFieldContainer.addEventListener('click', () => showProfile(username))
+		const user = field
+		postFieldContainer.addEventListener('click', () => showProfile(user))
 	}
 	parentContainer.append(postFieldContainer);
 
@@ -103,7 +97,43 @@ function showProfile(username) {
 	// Clear previously shown posts
 	document.querySelector('#users-posts').innerHTML = '';
 
+	document.querySelector('#profile').innerHTML = username;
 
+	loadFollowers(username);
+	loadFollowing(username);
+	loadPosts(username);
+
+
+}
+
+function loadFollowers(username) {
+
+	fetch('followers/' + username)
+		.then(response => response.json())
+		.then(followers => {
+			const followersContainer = document.getElementById("followers");
+			followersContainer.innerHTML = "Followers: " + followers;
+		})// Catch any errors and log them to the console
+		.catch(error => {
+			console.log('Error:', error);
+		});
+}
+
+function loadFollowing(username) {
+
+	fetch('following/' + username)
+		.then(response => response.json())
+		.then(following => {
+			const followingContainer = document.getElementById("following");
+			followingContainer.innerHTML = "Following: " + following;
+		})// Catch any errors and log them to the console
+		.catch(error => {
+			console.log('Error:', error);
+		});
+}
+
+
+function loadPosts(username) {
 	fetch('posts/' + username)
 		.then(response => response.json())
 		.then(posts => {
@@ -118,7 +148,6 @@ function showProfile(username) {
 				postContainer.append(postCardBody);
 				const postFieldContainer = document.createElement('div');
 				postCardBody.append(postFieldContainer);
-				addPostField(postCardBody, "h5", post.user, "card-title");
 				addPostField(postCardBody, "p", post.body, "card-text");
 				addPostField(postCardBody, "span", post.timestamp, "card-text");
 
@@ -128,5 +157,4 @@ function showProfile(username) {
 		.catch(error => {
 			console.log('Error:', error);
 		});
-
 }

@@ -2,10 +2,15 @@
 	margin: 2%;
 }
 
-#posts-view {
+#posts-view, #profile-view {
 	margin: 2%;
 }
 
 .card {
 	margin-top: 3px;
 }
+
+h3, #followers, #following {
+	text-align: center;
+}
+
