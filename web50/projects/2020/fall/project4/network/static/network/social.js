@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Don't show any posts upon logging in
 	document.querySelector('#posts-view').style.display = 'none';
+	document.querySelector('#profile-view').style.display = 'none';
 
 	// View all posts
 	document.querySelector('#allPosts').addEventListener('click', () => load_posts());
@@ -10,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	// Get user that was clicked on
 	const users = document.querySelectorAll('.card-title')
 	users.forEach(item => {
-		item.addEventListener('click', (event) => console.log(event.target))
+		item.addEventListener('click', (event) => console.log(event.target.innerHTML))
 	})
 
 
@@ -40,8 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function load_posts() {
-	// Show the posts block
+	// Show the applicable view
 	document.querySelector('#posts-view').style.display = 'block';
+	document.querySelector('#profile-view').style.display = 'none';
 
 	// Clear previously shown posts
 	document.querySelector('#posts').innerHTML = '';
@@ -93,14 +95,19 @@ function addPostField(parentContainer, element, field, className) {
 }
 
 function showProfile(username) {
+	// Hide other views
+	document.querySelector('#compose-view').style.display = 'none';
+	document.querySelector('#posts-view').style.display = 'none';
+	document.querySelector('#profile-view').style.display = 'block';
+
 	// Clear previously shown posts
-	document.querySelector('#posts').innerHTML = '';
+	document.querySelector('#users-posts').innerHTML = '';
 
 
 	fetch('posts/' + username)
 		.then(response => response.json())
 		.then(posts => {
-			const parentContainer = document.getElementById("posts");
+			const parentContainer = document.getElementById("users-posts");
 			posts.forEach(post => {
 				const postContainer = document.createElement('div');
 				// Use Bootstrap cards
@@ -111,7 +118,6 @@ function showProfile(username) {
 				postContainer.append(postCardBody);
 				const postFieldContainer = document.createElement('div');
 				postCardBody.append(postFieldContainer);
-				postFieldContainer.style.margin = "0px 25px 0px";
 				addPostField(postCardBody, "h5", post.user, "card-title");
 				addPostField(postCardBody, "p", post.body, "card-text");
 				addPostField(postCardBody, "span", post.timestamp, "card-text");

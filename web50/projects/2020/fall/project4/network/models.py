@@ -3,7 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    follower = models.ManyToManyField(
+        'self', blank=True)
 
 
 class Post(models.Model):

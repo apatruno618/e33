@@ -11,7 +11,22 @@ from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+
+    # Get posts from db
+    posts = Post.objects.all()
+
+    # Return posts in reverse chronologial order
+    posts = posts.order_by("-timestamp").all()
+
+    users = User.objects.filter(id=2)
+    followers = users[0].follower.all()
+    for follower in followers.all():
+        print(follower)
+
+    return render(request, "network/index.html", {
+        "posts": posts,
+        "followers": followers
+    })
 
 
 def login_view(request):
@@ -106,10 +121,9 @@ def profile(request, user):
 
     # Get the user object to access id
     userObject = User.objects.filter(username=user)
-    print(userObject[0].id)
 
+    # Get that user's posts
     posts = Post.objects.filter(user=userObject[0].id)
-
     posts = posts.order_by("-timestamp").all()
 
     return JsonResponse([post.serialize() for post in posts], safe=False)
