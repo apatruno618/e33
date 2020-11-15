@@ -1,16 +1,7 @@
-#compose-view {
-	margin: 2%;
-}
-
-#posts-view, #profile-view {
-	margin: 2%;
-}
-
-.card {
-	margin-top: 3px;
-}
-
-h3, #followers, #following {
+h2, #profile-header, form, nav {
 	text-align: center;
 }
 
+.card {
+	margin: 25px 50px;
+}

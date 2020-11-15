@@ -1,21 +1,79 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<div>
-	{% for post in posts %}
-	<div class="card">
+<div id="profile-header">
+	<h2>{{ user_profile }}</h2>
+	<div>
+		Followers: {{ followers }}
+	</div>
+	<div>
+		Following: {{ user_is_following }}
+	</div>
+	<div>
+		{% if user.is_authenticated %}
+		<!-- users cannot follow themselves -->
+		{% if user != user_profile %}
+		{% if on_followlist %}
+		<form action="{% url 'unfollow' %}" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="user_id" value="{{ user_profile.id }}">
+			<input class="btn btn-sm btn-primary" type="submit" value="Unfollow">
+		</form>
+		{% else %}
+		<form action="{% url 'follow' %}" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="user_id" value="{{ user_profile.id }}">
+			<input class="btn btn-sm btn-primary" type="submit" value="Follow">
+		</form>
+		{% endif %}
+		{% endif %}
+		{% endif %}
+	</div>
+</div>
+
+{% if posts.has_other_pages %}
+<nav>
+	<ul class="pagination pagination-sm">
+		{% if posts.has_previous %}
+		<li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+		{% else %}
+		<li class="disabled"><span class="page-link">&laquo;</span></li>
+		{% endif %}
+		{% for i in posts.paginator.page_range %}
+		{% if posts.number == i %}
+		<li class="page-item active" aria-current="page"><span class="page-link">{{ i }} <span
+					class="sr-only">(current)</span></span></li>
+		{% else %}
+		<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+		{% endif %}
+		{% endfor %}
+		{% if posts.has_next %}
+		<li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">&raquo;</a></li>
+		{% else %}
+		<li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+		{% endif %}
+	</ul>
+</nav>
+{% endif %}
+
+
+{% for post in posts %}
+<div class="card mb-3">
+
+	<div class="row no-gutters">
 		<div class="card-body">
-			<h5 class="card-title">{{post.user}}</h5>
-			<p class="card-text">{{post.body}}</p>
-			<p>{{post.timestamp}}</p>
+			<h5 class="card-title">
+				<a href="{% url 'profile' post.author.id %}">
+					{{ post.author }}
+				</a>
+			</h5>
+			<p class="card-text">{{ post.body }}</p>
+			<p class="card-text"><small class="text-muted">Created {{ post.timestamp }}</small></p>
 		</div>
 	</div>
 
-	{% empty %}
-	There are no posts.
-	{% endfor %}
-
-	{{followers}}
-
 </div>
+{% empty %}
+No posts.
+{% endfor %}
 {% endblock %}

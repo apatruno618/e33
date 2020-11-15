@@ -1,18 +1,30 @@
-import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import JsonResponse
-from django.shortcuts import HttpResponse, HttpResponseRedirect, render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
+from django.forms import ModelForm
+from django.core.paginator import Paginator
 
-from .models import User, Post
+from .models import User, Post, Follower
+
+
+class CreatePostForm(ModelForm):
+    class Meta:
+        model = Post
+        exclude = ['author', 'timestamp']
 
 
 def index(request):
+    # Get posts from db and return in reverse chronological order
+    posts = Post.objects.order_by("-timestamp").all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts, 10)
 
-    return render(request, "network/index.html")
+    paginated_posts = paginator.page(page)
+
+    return render(request, "network/index.html", {"title": "All Posts", "posts": paginated_posts})
 
 
 def login_view(request):
@@ -67,75 +79,84 @@ def register(request):
         return render(request, "network/register.html")
 
 
-@csrf_exempt
 @login_required
-def compose(request):
+def create(request):
+    if request.method == "POST":
+        # get form contents
+        form = CreatePostForm(request.POST)
+        if form.is_valid:
+            # soft save
+            post = form.save(commit=False)
+            post.author = request.user
+            form.save()
+            return HttpResponseRedirect(reverse("index"))
 
-    # Composing a new post must be via POST
-    if request.method != "POST":
-        return JsonResponse({"error": "POST request required."}, status=400)
-
-    # Get content of post
-    data = json.loads(request.body)
-    user = request.user
-    body = data.get("body", "")
-
-    # Add new post to db
-    post = Post(
-        user=user,
-        body=body
-    )
-    post.save()
-
-    return JsonResponse({"message": "Post sent successfully."}, status=201)
+    else:
+        return render(request, "network/create.html", {
+            'form': CreatePostForm()
+        })
 
 
-def posts(request):
+def profile(request, user_id):
+    # Find users posts
+    posts = Post.objects.filter(author=user_id).order_by("-timestamp").all()
+    user_profile = User.objects.get(id=user_id)
+    followers = user_profile.followers.count()
+    user_is_following = Follower.objects.filter(follower=user_profile).count()
 
-    # Get posts from db
-    posts = Post.objects.all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts, 10)
 
-    # Return posts in reverse chronologial order
-    posts = posts.order_by("-timestamp").all()
+    paginated_posts = paginator.page(page)
 
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    on_followerlist = False
+    for follower in user_profile.followers.all():
+        if follower.follower == request.user:
+            on_followerlist = True
+
+    return render(request, "network/profile.html", {"user_profile": user_profile, "posts": paginated_posts, "followers": followers, "user_is_following": user_is_following, "on_followlist": on_followerlist})
+
+
+def unfollow(request):
+    # This does not work but my logic is in the comments
+    if request.method == "POST":
+        # Get the follower
+        follower = get_object_or_404(User, username=follower)
+        # Get the subject we're interested in
+        subject = get_object_or_404(
+            Follower, subject=int(request.POST["user_id"]))
+        # Remove the follower from the subject's follower list
+        subject.followers.remove(follower)
+        # Send the user back to the subject's profile
+        return HttpResponseRedirect(reverse("profile", args=(int(request.POST["user_id"],))))
+
+
+def follow(request):
+    # This does not work but my logic is in the comments
+    if request.method == "POST":
+        # Get the follower
+        follower = get_object_or_404(User, username=follower)
+        # Get the subject we're interested in
+        subject = get_object_or_404(
+            Follower, subject=int(request.POST["user_id"]))
+        # Add the follower to the subject follower list
+        subject.followers.add(follower)
+        # Send the user back to the subject's profile
+        return HttpResponseRedirect(reverse("profile", args=(int(request.POST["user_id"],))))
 
 
 @login_required
-def profile_posts(request, user):
+def followlist(request):
+    # This does not work but my logic is in the comments
+    #  Get accounts the request.user is following
+    followlist = Follower.objects.filter(follower=request.user)
+    # Get posts from each of the accounts request.user is following
+    myposts = Post.objects.filter(author=request.user)
 
-    # Get the user object to access id
-    userObject = User.objects.filter(username=user)
+    # Ideally the only line needed would be
+    posts = request.user.followers.posts.order_by("-creation_time").all()
 
-    # Get that user's posts
-    posts = Post.objects.filter(user=userObject[0].id)
-    posts = posts.order_by("-timestamp").all()
-
-    return JsonResponse([post.serialize() for post in posts], safe=False)
-
-
-def profile_followers(request, user):
-
-    # Get the user object to access id
-    userObject = User.objects.get(username=user)
-
-    # Get number of followers
-    followers = userObject.follower.count()
-
-    return JsonResponse(followers, safe=False)
-
-
-def profile_following(request, user):
-
-    # Get the user object to access id
-    userObject = User.objects.get(username=user)
-    # print(userObject)
-
-    # Get all the account this user is following
-    peopleFollowing = User.objects.filter(follower=userObject.id)
-    # print(peopleFollowing)
-
-    # Count the accounts
-    following = peopleFollowing.count()
-
-    return JsonResponse(following, safe=False)
+    return render(request, "network/index.html", {
+        "title": "Following",
+        "posts": posts
+    })
