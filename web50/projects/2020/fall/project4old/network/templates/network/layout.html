@@ -24,15 +24,15 @@
 						<a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
 					</li>
 					{% endif %}
+					<!-- <li class="nav-item">
+						<a class="nav-link" href="{% url 'index' %}">Index</a>
+					</li> -->
 					<li class="nav-item">
-						<a class="nav-link" href="{% url 'index' %}">All Posts</a>
+						<a class="nav-link" id="allPosts" href="{% url 'index' %}">All Posts</a>
 					</li>
 					{% if user.is_authenticated %}
 					<li class="nav-item">
-						<a class="nav-link" href="{% url 'create' %}">Create Post</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'followlist' %}">Following</a>
+						<a class="nav-link" href="#">Following</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'logout' %}">Log Out</a>
@@ -53,6 +53,8 @@
 			{% block body %}
 			{% endblock %}
 		</div>
+
+
 	</body>
 
 </html>

@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -6,6 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.forms import ModelForm
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Follower
 
@@ -160,3 +162,38 @@ def followlist(request):
         "title": "Following",
         "posts": posts
     })
+
+
+@csrf_exempt
+@login_required
+def edit(request, post_id):
+
+    # Query for post
+    try:
+        post = Post.objects.get(author=request.user, pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("body") is not None:
+            post.body = data["body"]
+            print(data["body"])
+        post.save()
+        return HttpResponse(status=204)
+
+    # Email must be via GET or PUT
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
+
+
+@csrf_exempt
+@login_required
+def like(request, post_id):
+    if request.method == "PUT":
+        post = Post.objects.get(pk=post_id)
+        post.likes += 1
+        post.save()
+        return HttpResponse(status=204)

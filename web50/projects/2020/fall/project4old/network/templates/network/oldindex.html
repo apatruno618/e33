@@ -1,0 +1,46 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div id="posts-view">
+	<h3 id="post-header">All Posts</h3>
+	<!-- container div -->
+	<div id="posts">
+	</div>
+</div>
+
+{% if user.is_authenticated %}
+
+<div id="compose-view">
+	<h3>New Post</h3>
+	<form id="compose-form">
+		<div class="form-group">
+			From: <input disabled class="form-control" value="{{ request.user.email }}">
+		</div>
+		<textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+		<input type="submit" class="btn btn-primary" />
+	</form>
+</div>
+
+<div id="posts-view">
+	<h3 id="post-header">All Posts</h3>
+	<!-- container div -->
+	<div id="posts">
+	</div>
+</div>
+
+<div id="profile-view">
+	<h3 id="profile"></h3>
+	<div id="followers"></div>
+	<div id="following"></div>
+	<!-- container div -->
+	<div id="users-posts">
+	</div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'network/network2.js' %}"></script>
+{% endblock %}

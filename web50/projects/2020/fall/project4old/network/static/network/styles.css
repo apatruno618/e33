@@ -1,0 +1,23 @@
+#compose-view {
+	margin: 2%;
+}
+
+#posts-view, #profile-view {
+	margin: 2%;
+}
+
+.card {
+	margin-top: 3px;
+}
+
+.card-title {
+	cursor: pointer;
+}
+
+h3, #followers, #following {
+	text-align: center;
+}
+
+#profile-view button {
+	text-align: center;
+}

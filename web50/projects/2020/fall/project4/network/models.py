@@ -12,13 +12,15 @@ class Post(models.Model):
         "User", on_delete=models.CASCADE, related_name="posts")
     body = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    likes = models.PositiveIntegerField(default=0)
 
     def serialize(self):
         return {
             "id": self.id,
             "author": self.author,
             "body": self.body,
-            "timestamp": self.timestamp.strftime("%b %-d %Y, %-I:%M %p")
+            "timestamp": self.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
+            "likes": self.likes
         }
 
 

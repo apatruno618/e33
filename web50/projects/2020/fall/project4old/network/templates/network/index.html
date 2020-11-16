@@ -1,0 +1,48 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if user.is_authenticated %}
+
+<div id="compose-view">
+	<h3>New Post</h3>
+	<form id="compose-form" onsubmit="submitPost()">
+		<div class="form-group">
+			From: <input disabled class="form-control" value="{{ request.user.email }}">
+		</div>
+		<textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+		<input type="submit" class="btn btn-primary" />
+	</form>
+</div>
+
+{% endif %}
+
+<div id="profile-view">
+	<h3 id="profile"></h3>
+	<div id="followers"></div>
+	<div id="following"></div>
+	{% if user.is_authenticated %}
+	<div loggedInUsername={{user.username}} id="follow-button-group">
+		<button type="button" class="btn btn-primary">Follow</button>
+		<button>Unfollow</button>
+	</div>
+	{% endif %}
+	<!-- container div -->
+	<div id="users-posts">
+	</div>
+
+</div>
+
+
+<div id="posts-view">
+	<h3 id="post-header">All Posts</h3>
+	<!-- container div -->
+	<div id="posts">
+	</div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'network/network.js' %}"></script>
+{% endblock %}

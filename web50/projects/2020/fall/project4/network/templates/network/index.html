@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 <h2>{{ title }}</h2>
@@ -38,8 +39,14 @@
 					{{ post.author }}
 				</a>
 			</h5>
-			<p class="card-text">{{ post.body }}</p>
+			<span class="edit-anchor" id="{{ post.id }}"></span>
+			<p id="post-body" class="card-text">{{ post.body }}</p>
 			<p class="card-text"><small class="text-muted">Created {{ post.timestamp }}</small></p>
+			<p class="card-text likes">{{ post.likes }} likes</p>
+			<button class="btn btn-link" post="{{ post.id }}">Like</button>
+			{% if user == post.author %}
+			<button class="btn btn-secondary" post="{{ post.id }}">Edit</button>
+			{% endif %}
 		</div>
 	</div>
 
@@ -47,10 +54,10 @@
 {% empty %}
 No posts.
 {% endfor %}
+{% endblock %}
 
 <!-- with pagination help from https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html -->
 
-
-
-
+{% block script %}
+<script src=" {% static 'network/network.js' %}"></script>
 {% endblock %}
