@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1>Customers</h1>
+{% for customer in customers %}
+{{customer.id}}
+{{customer.name}}
+{{customer.phone}}
+{% endfor %}
+{% endblock %}
