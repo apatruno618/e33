@@ -11,7 +11,7 @@
 	</li>
 	{% endfor %}
 </ul>
-<h1>Products</h1>
+<h1>All Products</h1>
 <ul>
 	{% for product in products %}
 	<li>
@@ -21,10 +21,20 @@
 	</li>
 	{% endfor %}
 </ul>
+<h1>Products within a category</h1>
 <ul>
-	{% for category in categorys %}
+	{% for category in categories %}
 	<li>
-		{{category.products}}
+		{{category.name}}
+		{{category.price}}
+	</li>
+	{% endfor %}
+</ul>
+<h1>Category of products by a flavor</h1>
+<ul>
+	{% for flavor in flavors %}
+	<li>
+		{{flavor.category.name}}
 	</li>
 	{% endfor %}
 </ul>

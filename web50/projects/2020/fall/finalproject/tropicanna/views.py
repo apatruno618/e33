@@ -2,17 +2,29 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
-from .models import User, Customer, Category, Product
+from .models import User, Customer, Category, Flavor, Product
 
 # Create your views here.
 
 
 def index(request):
+
+    category = Category.objects.get(name="1/2 Gal. Tropics")
+    # print(category)
+    products_by_category = category.products.all()
+    # print(products_by_category)
+    flavor = Flavor.objects.get(name="Pineapple")
+    print(flavor)
+    products_by_flavor = flavor.products.all()
+    print(products_by_flavor)
+
     return render(request, "tropicanna/index.html", {
         "customers": Customer.objects.all(),
-        "products": Product.objects.all(),
-        "categories": Category.objects.all()
+        "products": products_by_category,
+        "categories": Category.objects.all(),
+        "flavors": products_by_flavor
     })
 
 
