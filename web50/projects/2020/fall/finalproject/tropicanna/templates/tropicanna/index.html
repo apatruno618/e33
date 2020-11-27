@@ -1,0 +1,31 @@
+{% extends "tropicanna/layout.html" %}
+
+{% block body %}
+<h1>Customers</h1>
+<ul>
+	{% for customer in customers %}
+	<li>
+		{{customer.id}}
+		{{customer.name}}
+		{{customer.phone}}
+	</li>
+	{% endfor %}
+</ul>
+<h1>Products</h1>
+<ul>
+	{% for product in products %}
+	<li>
+		{{product.id}}
+		{{product.category.name}}
+		{{product.flavor.name}}
+	</li>
+	{% endfor %}
+</ul>
+<ul>
+	{% for category in categorys %}
+	<li>
+		{{category.products}}
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}
