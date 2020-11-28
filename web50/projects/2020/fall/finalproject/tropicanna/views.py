@@ -1,12 +1,14 @@
+import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Customer, Category, Flavor, Product
-
-# Create your views here.
 
 
 def index(request):
@@ -16,14 +18,15 @@ def index(request):
     products_by_category = category.products.all()
     # print(products_by_category)
     flavor = Flavor.objects.get(name="Pineapple")
-    print(flavor)
+    # print(flavor)
     products_by_flavor = flavor.products.all()
-    print(products_by_flavor)
+    # print(products_by_flavor)
 
     return render(request, "tropicanna/index.html", {
+        "all_products": Product.objects.all(),
         "customers": Customer.objects.all(),
-        "products": products_by_category,
         "categories": Category.objects.all(),
+        "products": products_by_category,
         "flavors": products_by_flavor
     })
 
@@ -78,3 +81,31 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "tropicanna/register.html")
+
+
+@login_required
+def order(request):
+    return render(request, "tropicanna/order.html")
+
+
+@csrf_exempt
+@login_required
+def customer(request):
+
+    # Saving a new customer must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get the new customer info
+    data = json.loads(request.body)
+    name = data["customerName"]
+    phone = data["customerPhone"]
+
+    if name == [""]:
+        return JsonResponse({"error": "Must include a name."}, status=400)
+
+    # Save new customer to db
+    customer = Customer(name=name, phone=phone)
+    customer.save()
+
+    return JsonResponse({"message": "Email sent successfully."}, status=201)

@@ -14,19 +14,23 @@
 
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<a class="navbar-brand" href="#">Tropicanna</a>
+			<a class="navbar-brand">Tropicanna</a>
 
 			<div>
 				<ul class="navbar-nav mr-auto">
 					{% if user.is_authenticated %}
 					<li class="nav-item">
-						<a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+						<a class="nav-link"><strong>{{ user.username }}</strong></a>
 					</li>
 					{% endif %}
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'index' %}">All Customers</a>
-					</li>
+
 					{% if user.is_authenticated %}
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'index' %}">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'order' %}">Submit an order</a>
+					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'logout' %}">Log Out</a>
 					</li>
@@ -43,7 +47,7 @@
 		</nav>
 
 
-		<div>
+		<div id="app">
 			{% block body %}
 			{% endblock %}
 		</div>
