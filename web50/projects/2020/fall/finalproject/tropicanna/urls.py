@@ -11,4 +11,5 @@ urlpatterns = [
 
     # API
     path("customer", views.customer, name="customer"),
+    path("category", views.category, name="category"),
 ]

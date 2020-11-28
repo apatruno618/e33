@@ -99,7 +99,7 @@ def customer(request):
     # Get the new customer info
     data = json.loads(request.body)
     name = data["customerName"]
-    phone = data["customerPhone"]
+    phone = int(data["customerPhone"])
 
     if name == [""]:
         return JsonResponse({"error": "Must include a name."}, status=400)
@@ -108,4 +108,27 @@ def customer(request):
     customer = Customer(name=name, phone=phone)
     customer.save()
 
-    return JsonResponse({"message": "Email sent successfully."}, status=201)
+    return JsonResponse({"message": "Customer saved successfully."}, status=201)
+
+
+@csrf_exempt
+@login_required
+def category(request):
+
+    # Saving a new customer must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get the new customer info
+    data = json.loads(request.body)
+    name = data["categoryName"]
+    price = float(data["categoryPrice"])
+    # print(type(price))
+
+    if name == [""] or price == [""]:
+        return JsonResponse({"error": "A new category must have a name and price."}, status=400)
+
+    category = Category(name=name, price=price)
+    category.save()
+
+    return JsonResponse({"message": "Category saved successfully."}, status=201)
