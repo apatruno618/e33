@@ -24,6 +24,7 @@ def index(request):
 
     return render(request, "tropicanna/index.html", {
         "all_products": Product.objects.all(),
+        "all_flavors": Flavor.objects.all(),
         "customers": Customer.objects.all(),
         "categories": Category.objects.all(),
         "products": products_by_category,
@@ -115,11 +116,11 @@ def customer(request):
 @login_required
 def category(request):
 
-    # Saving a new customer must be via POST
+    # Saving a new category must be via POST
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    # Get the new customer info
+    # Get the new category info
     data = json.loads(request.body)
     name = data["categoryName"]
     price = float(data["categoryPrice"])
@@ -132,3 +133,24 @@ def category(request):
     category.save()
 
     return JsonResponse({"message": "Category saved successfully."}, status=201)
+
+
+@csrf_exempt
+@login_required
+def flavor(request):
+
+    # Saving a new flavor must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+        # Get the new category info
+    data = json.loads(request.body)
+    name = data["flavorName"]
+
+    if name == [""]:
+        return JsonResponse({"error": "A new flavor must have a name."}, status=400)
+
+    flavor = Flavor(name=name)
+    flavor.save()
+
+    return JsonResponse({"message": "Flavor saved successfully."}, status=201)

@@ -17,6 +17,27 @@
 
 {% if user.is_authenticated %}
 <div>
+	<h3>New Flavor</h3>
+	<form id="flavor-form">
+		<div class="form-group">
+			<input id="flavor-name" class="form-control" placeholder="Name" required>
+		</div>
+		<input type="submit" class="btn btn-primary" />
+	</form>
+</div>
+<div>
+	<h1>All Flavors</h1>
+	<ul>
+		{% for flavor in all_flavors %}
+		<li>
+			{{flavor.id}}
+			{{flavor.name}}
+		</li>
+		{% endfor %}
+		<span id="new-flavor-anchor"></span>
+	</ul>
+</div>
+<div>
 	<h3>New Customer</h3>
 	<form id="customer-form">
 		<div class="form-group">

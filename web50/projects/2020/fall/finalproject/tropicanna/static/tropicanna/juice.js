@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	document.querySelector('#customer-form').addEventListener('submit', () => saveNewCustomer())
 	// Submits new category of products
 	document.querySelector('#category-form').addEventListener('submit', () => saveNewCategory())
+	// Submits new flavor
+	document.querySelector('#flavor-form').addEventListener('submit', () => saveNewFlavor())
 });
 
 function saveNewCustomer() {
@@ -24,7 +26,7 @@ function saveNewCustomer() {
 		// Display the new customer
 		.then(() => {
 			const newCustomerItem = document.createElement('li');
-			newCustomerItem.innerHTML = customerName, customerPhone;
+			newCustomerItem.innerHTML = customerName + ' ' + customerPhone;
 			document.querySelector('#new-customer-anchor').append(newCustomerItem);
 			console.log('customer saved');
 		})
@@ -32,7 +34,7 @@ function saveNewCustomer() {
 		.catch(error => {
 			console.log('Error:', error);
 		});
-}
+};
 
 function saveNewCategory() {
 	// Prevent default submission
@@ -53,7 +55,7 @@ function saveNewCategory() {
 		// Display the new category
 		.then(() => {
 			const newCategoryItem = document.createElement('li');
-			newCategoryItem.innerHTML = categoryName, categoryPrice;
+			newCategoryItem.innerHTML = categoryName + ' ' + categoryPrice;
 			document.querySelector('#new-category-anchor').append(newCategoryItem);
 			console.log('category saved');
 		})
@@ -61,4 +63,30 @@ function saveNewCategory() {
 		.catch(error => {
 			console.log('Error:', error);
 		});
-}
+};
+
+function saveNewFlavor() {
+	// Prevent default submission
+	event.preventDefault();
+
+	// Gets the contents of the form
+	const flavorName = document.querySelector('#flavor-name').value;
+	// Saves the email via API
+	fetch('/flavor', {
+		method: 'POST',
+		body: JSON.stringify({
+			flavorName: flavorName
+		})
+	})
+		// Display the new category
+		.then(() => {
+			const newFlavorItem = document.createElement('li');
+			newFlavorItem.innerHTML = flavorName;
+			document.querySelector('#new-flavor-anchor').append(newFlavorItem);
+			console.log('flavor saved');
+		})
+		// Catch any errors and log them to the console
+		.catch(error => {
+			console.log('Error:', error);
+		});
+};
