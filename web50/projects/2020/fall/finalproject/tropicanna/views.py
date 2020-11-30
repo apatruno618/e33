@@ -189,3 +189,25 @@ def product(request, category_id):
         "flavors": flavors,
         "non_flavors": non_flavors
     })
+
+
+@login_required
+def add_flavor(request, category_id):
+
+    # For a post request, add a new flavor
+    if request.method == "POST":
+
+        # Accessing the product
+        category = Category.objects.get(pk=category_id)
+        print(request.POST)
+        # Finding the passenger id from the submitted form data
+        flavor_id = int(request.POST["flavor"])
+
+        # Finding the passenger based on the id
+        flavor = Flavor.objects.get(pk=flavor_id)
+
+        # Add passenger to the flight
+        category.flavors.add(flavor)
+
+        # Redirect user to flight page
+        return HttpResponseRedirect(reverse("product", args=(category.id,)))
