@@ -12,27 +12,10 @@ from .models import User, Customer, Category, Flavor, Product
 
 
 def index(request):
-
-    category = Category.objects.get(name="1/2 Gal. Tropics")
-    # print(category)
-    products_by_category = category.products.all()
-    # print(products_by_category)
-    flavor = Flavor.objects.get(name="Pineapple")
-    # print(flavor)
-    products_by_flavor = flavor.products.all()
-    # print(products_by_flavor)
-
-    # flight = Flight.objects.get(id=flight_id)
-    # passengers = flight.passengers.all()
-    # non_passengers = Passenger.objects.exclude(flights=flight).all()
-
     return render(request, "tropicanna/index.html", {
         "all_categories": Category.objects.all(),
         "all_flavors": Flavor.objects.all(),
-        "customers": Customer.objects.all(),
-        "categories": Category.objects.all(),
-        "products": products_by_category,
-        "flavors": products_by_flavor
+        "customers": Customer.objects.all()
     })
 
 
@@ -93,9 +76,10 @@ def order(request):
 
     # Submitting an order
     if request.method == "POST":
-        # data = json.loads(request)
+        # data = json.loads(request.body)
+        data = request.body
+        print(data)
 
-        print(request.body)
         return HttpResponseRedirect(reverse("index"))
 
     else:

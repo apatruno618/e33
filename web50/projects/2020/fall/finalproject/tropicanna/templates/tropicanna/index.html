@@ -2,12 +2,87 @@
 {% load static %}
 
 {% block body %}
+{% if user.is_authenticated %}
+<div id="main-container">
+	<div>
+		<h4>New Customer</h4>
+		<form id="customer-form">
+			<div class="form-group">
+				<input id="customer-name" class="form-control" placeholder="Name" required>
+			</div>
+			<div class="form-group">
+				<input class="form-control" id="customer-phone" placeholder="Phone">
+			</div>
+			<input type="submit" class="btn btn-primary" value="Add" />
+		</form>
+
+		<h2>Customers</h2>
+		<ul>
+			{% for customer in customers %}
+			<li>
+				{{customer.name}}
+				{{customer.phone}}
+			</li>
+			{% endfor %}
+			<span id="new-customer-anchor"></span>
+		</ul>
+
+	</div>
+	<div>
+		<h4>New Category</h4>
+		<form id="category-form">
+			<div class="form-group">
+				<input id="category-name" class="form-control" placeholder="Name" required>
+			</div>
+			<div class="form-group">
+				<input id="category-price" class="form-control" placeholder="Price" type="number" min="0.00"
+					max="10000.00" step="0.01" required>
+			</div>
+			<input type="submit" class="btn btn-primary" value="Add" />
+		</form>
+
+		<h2>Categories</h2>
+		<ul>
+			{% for category in all_categories %}
+			<li>
+				<a href="{% url 'product' category.id %}">{{category.name}}</a>
+				${{category.price}}
+			</li>
+			{% endfor %}
+			<span id="new-category-anchor"></span>
+		</ul>
+	</div>
+	<div>
+		<h4>New Flavor</h4>
+		<form id="flavor-form">
+			<div class="form-group">
+				<input id="flavor-name" class="form-control" placeholder="Name" required>
+			</div>
+			<input type="submit" class="btn btn-primary" value="Add" />
+		</form>
+
+		<div>
+			<h2>Flavors</h2>
+			<ul>
+				{% for flavor in all_flavors %}
+				<li>
+					{{flavor.name}}
+				</li>
+				{% endfor %}
+				<span id="new-flavor-anchor"></span>
+			</ul>
+		</div>
+
+	</div>
+</div>
+
+{% endif %}
 <div>
 	<h1>Available Products (categories with at least 1 flavor)</h1>
 	<ul>
 		{% for category in all_categories %}
 		{% for flavor in category.flavors.all %}
-		<li> {{category.name}}, {{category.price}}:
+		<li> ${{category.price}}/case, {{category.name}}:
 			{{flavor.name}}</li>
 		{% endfor %}
 		{% endfor %}
@@ -15,103 +90,9 @@
 </div>
 
 
-{% if user.is_authenticated %}
-<div>
-	<h3>New Flavor</h3>
-	<form id="flavor-form">
-		<div class="form-group">
-			<input id="flavor-name" class="form-control" placeholder="Name" required>
-		</div>
-		<input type="submit" class="btn btn-primary" />
-	</form>
-</div>
-<div>
-	<h1>All Flavors</h1>
-	<ul>
-		{% for flavor in all_flavors %}
-		<li>
-			{{flavor.id}}
-			{{flavor.name}}
-		</li>
-		{% endfor %}
-		<span id="new-flavor-anchor"></span>
-	</ul>
-</div>
-<div>
-	<h3>New Customer</h3>
-	<form id="customer-form">
-		<div class="form-group">
-			<input id="customer-name" class="form-control" placeholder="Name" required>
-		</div>
-		<div class="form-group">
-			<input class="form-control" id="customer-phone" placeholder="Phone">
-		</div>
-		<input type="submit" class="btn btn-primary" />
-	</form>
-</div>
-<h1>All Customers</h1>
-<ul>
-	{% for customer in customers %}
-	<li>
-		{{customer.id}}
-		{{customer.name}}
-		{{customer.phone}}
-	</li>
-	{% endfor %}
-	<span id="new-customer-anchor"></span>
-</ul>
-
-<div>
-	<h3>New Category</h3>
-	<form id="category-form">
-		<div class="form-group">
-			<input id="category-name" class="form-control" placeholder="Name" required>
-		</div>
-		<div class="form-group">
-			<input id="category-price" class="form-control" placeholder="Price" type="number" min="0.00" max="10000.00"
-				step="0.01" required>
-		</div>
-		<input type="submit" class="btn btn-primary" />
-	</form>
-</div>
-
-<h1>All categories</h1>
-<ul>
-	{% for category in categories %}
-	<li>
-		<a href="{% url 'product' category.id %}">{{category.name}}</a>
-		{{category.price}}
-	</li>
-	{% endfor %}
-	<span id="new-category-anchor"></span>
-</ul>
-
-
-<h1>All Products within a category (has category and flavor)</h1>
-<ul>
-	{% for product in products %}
-	<li>
-		{{product.id}}
-		{{product.category.name}}
-		{{product.category.price}}
-		{{product.flavor.name}}
-	</li>
-	{% endfor %}
-</ul>
-
-<h1>Category of products by a flavor</h1>
-<ul>
-	{% for flavor in flavors %}
-	<li>
-		{{flavor.category.name}}
-		{{flavor.category.price}}
-	</li>
-	{% endfor %}
-</ul>
-{% endif %}
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'tropicanna/juice.js' %}">
+<script src=" {% static 'tropicanna/juice.js' %}">
 </script>
 {% endblock %}

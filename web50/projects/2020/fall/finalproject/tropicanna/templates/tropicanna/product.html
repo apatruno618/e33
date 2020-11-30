@@ -16,11 +16,13 @@
 
 <form action="{% url 'add_flavor' category.id %}" method="post">
 	{% csrf_token %}
-	<select name="flavor" id="">
-		{% for flavor in non_flavors %}
-		<option value="{{ flavor.id }}">{{ flavor.name }}</option>
-		{% endfor %}
-	</select>
+	<div class="form-group">
+		<select name="flavor" class="form-control">
+			{% for flavor in non_flavors %}
+			<option value="{{ flavor.id }}">{{ flavor.name }}</option>
+			{% endfor %}
+		</select>
+	</div>
 	<input type="submit" class="btn btn-primary" value="Add" />
 </form>
 {% endblock %}
