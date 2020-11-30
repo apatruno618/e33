@@ -1,0 +1,26 @@
+{% extends "tropicanna/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+
+<h1>Product Category {{category.id}}: {{category.name}}</h1>
+<div>Price: {{category.price}}</div>
+<ul>
+	{% for flavor in flavors %}
+	<li>{{ flavor.name }}</li>
+	{% empty %}
+	<li>No flavors.</li>
+	{% endfor %}
+</ul>
+
+<form>
+	{% csrf_token %}
+	<select name="flavor" id="">
+		{% for flavor in non_flavors %}
+		<option value="{{ flavor.id }}">{{ flavor.name }}</option>
+		{% endfor %}
+	</select>
+	<input type="submit">
+</form>
+{% endblock %}

@@ -22,6 +22,10 @@ def index(request):
     products_by_flavor = flavor.products.all()
     # print(products_by_flavor)
 
+    # flight = Flight.objects.get(id=flight_id)
+    # passengers = flight.passengers.all()
+    # non_passengers = Passenger.objects.exclude(flights=flight).all()
+
     return render(request, "tropicanna/index.html", {
         "all_products": Product.objects.all(),
         "all_flavors": Flavor.objects.all(),
@@ -154,3 +158,34 @@ def flavor(request):
     flavor.save()
 
     return JsonResponse({"message": "Flavor saved successfully."}, status=201)
+
+
+@csrf_exempt
+@login_required
+def product(request, category_id):
+
+    # Saving a new flavor must be via POST
+    # if request.method != "POST":
+    # return JsonResponse({"error": "POST request required."}, status=400)
+
+    category = Category.objects.get(pk=category_id)
+    flavors = category.flavors.all()
+    non_flavors = Flavor.objects.exclude(categories=category).all()
+    print(non_flavors)
+    # Finding the flavor id and category from the submitted form data
+    # flavor_id = int(request.POST["flavor"])
+    # category_id = int(request.POST["category"])
+
+    # Finding the category based on the id
+    # category = Category.objects.get(pk=category_id)
+
+    # Add flavor to the category
+    # category.flavors.add(flavor)
+
+    # return JsonResponse({"message": "Flavor saved successfully."}, status=201)
+
+    return render(request, "tropicanna/product.html", {
+        "category": category,
+        "flavors": flavors,
+        "non_flavors": non_flavors
+    })

@@ -20,18 +20,6 @@ class Customer(models.Model):
         }
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "price": self.price
-        }
-
-
 class Flavor(models.Model):
     name = models.CharField(max_length=100)
 
@@ -39,6 +27,21 @@ class Flavor(models.Model):
         return {
             "id": self.id,
             "name": self.name,
+        }
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    flavors = models.ManyToManyField(
+        Flavor, blank=True, related_name="categories")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "flavors": self.flavors
         }
 
 
