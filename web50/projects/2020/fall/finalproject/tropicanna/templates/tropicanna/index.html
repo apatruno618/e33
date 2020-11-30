@@ -3,13 +3,13 @@
 
 {% block body %}
 <div>
-	<h1>Available Products</h1>
+	<h1>Available Products (categories with at least 1 flavor)</h1>
 	<ul>
-		{% for product in all_products %}
-		<li href>
-			{{product.category.name}}
-			{{product.flavor.name}}
-		</li>
+		{% for category in all_categories %}
+		{% for flavor in category.flavors.all %}
+		<li> {{category.name}}, {{category.price}}:
+			{{flavor.name}}</li>
+		{% endfor %}
 		{% endfor %}
 	</ul>
 </div>
@@ -79,7 +79,7 @@
 <ul>
 	{% for category in categories %}
 	<li>
-		{{category.name}}
+		<a href="{% url 'product' category.id %}">{{category.name}}</a>
 		{{category.price}}
 	</li>
 	{% endfor %}

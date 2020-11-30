@@ -27,7 +27,7 @@ def index(request):
     # non_passengers = Passenger.objects.exclude(flights=flight).all()
 
     return render(request, "tropicanna/index.html", {
-        "all_products": Product.objects.all(),
+        "all_categories": Category.objects.all(),
         "all_flavors": Flavor.objects.all(),
         "customers": Customer.objects.all(),
         "categories": Category.objects.all(),
@@ -90,7 +90,19 @@ def register(request):
 
 @login_required
 def order(request):
-    return render(request, "tropicanna/order.html")
+
+    # Submitting an order
+    if request.method == "POST":
+        # data = json.loads(request)
+
+        print(request.body)
+        return HttpResponseRedirect(reverse("index"))
+
+    else:
+        return render(request, "tropicanna/order.html", {
+            "customers": Customer.objects.all(),
+            "all_categories": Category.objects.all(),
+        })
 
 
 @csrf_exempt
@@ -171,7 +183,7 @@ def product(request, category_id):
     category = Category.objects.get(pk=category_id)
     flavors = category.flavors.all()
     non_flavors = Flavor.objects.exclude(categories=category).all()
-    print(non_flavors)
+    # print(non_flavors)
     # Finding the flavor id and category from the submitted form data
     # flavor_id = int(request.POST["flavor"])
     # category_id = int(request.POST["category"])
@@ -199,7 +211,7 @@ def add_flavor(request, category_id):
 
         # Accessing the product
         category = Category.objects.get(pk=category_id)
-        print(request.POST)
+
         # Finding the passenger id from the submitted form data
         flavor_id = int(request.POST["flavor"])
 
