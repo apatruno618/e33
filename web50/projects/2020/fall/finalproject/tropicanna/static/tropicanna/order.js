@@ -24,7 +24,7 @@ function calculateOrder() {
 				const orderedItem = { category: category, flavor: flavor, quantity: quantity, price: price }
 				const totalPrice = price * quantity;
 				console.log(totalPrice);
-				document.querySelector('[category-id="category"][flavor-id="flavor"]').value = totalPrice;
+				document.querySelector(`[category-id="${category}"][flavor-id="${flavor}"]`).value = "$" + totalPrice;
 				orderedItems.push(orderedItem);
 			}
 		}
