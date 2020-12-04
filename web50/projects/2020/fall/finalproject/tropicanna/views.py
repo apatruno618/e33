@@ -13,9 +13,7 @@ from .models import User, Customer, Category, Flavor, Product
 
 def index(request):
     return render(request, "tropicanna/index.html", {
-        "all_categories": Category.objects.all(),
-        "all_flavors": Flavor.objects.all(),
-        "customers": Customer.objects.all()
+        "all_categories": Category.objects.all()
     })
 
 
@@ -72,6 +70,15 @@ def register(request):
 
 
 @login_required
+def controls(request):
+    return render(request, "tropicanna/controls.html", {
+        "all_categories": Category.objects.all(),
+        "all_flavors": Flavor.objects.all(),
+        "customers": Customer.objects.all()
+    })
+
+
+@login_required
 def order(request):
 
     # Submitting an order
@@ -112,7 +119,6 @@ def customer(request):
     return JsonResponse({"message": "Customer saved successfully."}, status=201)
 
 
-@csrf_exempt
 @login_required
 def category(request):
 
@@ -121,10 +127,9 @@ def category(request):
         return JsonResponse({"error": "POST request required."}, status=400)
 
     # Get the new category info
-    data = json.loads(request.body)
-    name = data["categoryName"]
-    price = float(data["categoryPrice"])
-    # print(type(price))
+    data = request.POST
+    name = data["category-name"]
+    price = float(data["category-price"])
 
     if name == [""] or price == [""]:
         return JsonResponse({"error": "A new category must have a name and price."}, status=400)
@@ -132,7 +137,8 @@ def category(request):
     category = Category(name=name, price=price)
     category.save()
 
-    return JsonResponse({"message": "Category saved successfully."}, status=201)
+    # Save clicks by sending the user to the category's page to add new flavors
+    return HttpResponseRedirect(reverse("product", args=(category.id,)))
 
 
 @csrf_exempt

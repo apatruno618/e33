@@ -9,7 +9,20 @@
 	justify-content: space-evenly;
 }
 
+img {
+	width: 20%;
+	height: auto;
+	border-radius: 8px;
+}
 
+#home {
+	text-align: center;
+}
+
+#company-description {
+	font-size: small;
+	font-style: italic;
+}
 
 /* #customer-form, #category-form, #flavor-form {
 	max-width: 100%;
