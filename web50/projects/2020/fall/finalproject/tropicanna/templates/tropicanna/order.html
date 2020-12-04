@@ -1,11 +1,10 @@
 {% extends "tropicanna/layout.html" %}
+{% load static %}
 
 {% block body %}
 <h1>New order</h1>
 
-
-<form action="{% url 'order' %}" method="post">
-	{% csrf_token %}
+<form id="order-form">
 	<div class="form-group">
 		<label>Customer</label>
 		<select name="customer" class="form-control">
@@ -18,15 +17,26 @@
 
 	<div class="form-group">
 		{% for category in all_categories %}
-		<strong>{{category.name}}</strong>
+		<!-- don't show categories that don't have flavors -->
+		{% if category.flavors.all %}
+		<strong>{{category.name}} - ${{category.price}}</strong>
 		{% for flavor in category.flavors.all %}
 		<div>
-			<input type="number" category="{{category.name}}" name="{{flavor.name}}-quantity" step="1">
+			{{flavor.id}}
+			<input class="total-price" category-id="{{category.id}}" flavor-id="{{flavor.id}}" disabled>
+			<input type="number" category="{{category.id}}" flavor="{{flavor.id}}" price="{{category.price}}"
+				name="{{flavor.name}}-quantity" step="1">
 			{{flavor.name}}
 		</div>
 		{% endfor %}
+		{% endif %}
 		{% endfor %}
 	</div>
-	<input type="submit" class="btn btn-primary" />
+	<input type="submit" class="btn btn-primary" value="Calculate" />
 </form>
+
+{% endblock %}
+
+{% block script %}
+<script src=" {% static 'tropicanna/order.js' %}"></script>
 {% endblock %}

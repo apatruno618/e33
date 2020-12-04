@@ -78,24 +78,6 @@ def controls(request):
     })
 
 
-@login_required
-def order(request):
-
-    # Submitting an order
-    if request.method == "POST":
-        # data = json.loads(request.body)
-        data = request.body
-        print(data)
-
-        return HttpResponseRedirect(reverse("index"))
-
-    else:
-        return render(request, "tropicanna/order.html", {
-            "customers": Customer.objects.all(),
-            "all_categories": Category.objects.all(),
-        })
-
-
 @csrf_exempt
 @login_required
 def customer(request):
@@ -127,9 +109,8 @@ def category(request):
         return JsonResponse({"error": "POST request required."}, status=400)
 
     # Get the new category info
-    data = request.POST
-    name = data["category-name"]
-    price = float(data["category-price"])
+    name = request.POST["category-name"]
+    price = float(request.POST["category-price"])
 
     if name == [""] or price == [""]:
         return JsonResponse({"error": "A new category must have a name and price."}, status=400)
@@ -149,7 +130,7 @@ def flavor(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-        # Get the new category info
+    # Get the new flavor info
     data = json.loads(request.body)
     name = data["flavorName"]
 
@@ -166,25 +147,10 @@ def flavor(request):
 @login_required
 def product(request, category_id):
 
-    # Saving a new flavor must be via POST
-    # if request.method != "POST":
-    # return JsonResponse({"error": "POST request required."}, status=400)
-
+    # page allows user to associate flavors to a category
     category = Category.objects.get(pk=category_id)
     flavors = category.flavors.all()
     non_flavors = Flavor.objects.exclude(categories=category).all()
-    # print(non_flavors)
-    # Finding the flavor id and category from the submitted form data
-    # flavor_id = int(request.POST["flavor"])
-    # category_id = int(request.POST["category"])
-
-    # Finding the category based on the id
-    # category = Category.objects.get(pk=category_id)
-
-    # Add flavor to the category
-    # category.flavors.add(flavor)
-
-    # return JsonResponse({"message": "Flavor saved successfully."}, status=201)
 
     return render(request, "tropicanna/product.html", {
         "category": category,
@@ -213,3 +179,13 @@ def add_flavor(request, category_id):
 
         # Redirect user to flight page
         return HttpResponseRedirect(reverse("product", args=(category.id,)))
+
+
+@csrf_exempt
+@login_required
+def order(request):
+
+    return render(request, "tropicanna/order.html", {
+        "customers": Customer.objects.all(),
+        "all_categories": Category.objects.all(),
+    })
