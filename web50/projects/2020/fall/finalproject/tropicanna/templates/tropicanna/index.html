@@ -5,6 +5,7 @@
 {% if user.is_authenticated %}
 <h6>Welcome!</h6>
 {% endif %}
+
 <div>
 	<div id="home">
 		<h1>Tropicanna</h1>
@@ -13,8 +14,20 @@
 			Because everyone loves an ice cold glass of juice
 		</h4>
 		<img src="../static/images/morton-xiong-EqcJNWkxyko-unsplash.jpg" alt="Juice">
-
 	</div>
+
+	{% if user.is_authenticated%}
+	<div>
+		<h3>Current Orders</h3>
+		<ul>
+			{% for order in orders %}
+			<li>
+				<a href="{% url 'view_order' order.id %}">{{order}}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
 	<div>
 		<h3>Available Products (categories with at least 1 flavor)</h3>
 		<ul>

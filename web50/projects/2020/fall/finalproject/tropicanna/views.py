@@ -13,6 +13,7 @@ from .models import User, Customer, Category, Flavor, Order, OrderedItem
 
 def index(request):
     return render(request, "tropicanna/index.html", {
+        "orders": Order.objects.filter(delivered=False).order_by("-order_date").all(),
         "all_categories": Category.objects.all()
     })
 
@@ -168,16 +169,16 @@ def add_flavor(request, category_id):
         # Accessing the product category
         category = Category.objects.get(pk=category_id)
 
-        # Finding the passenger id from the submitted form data
+        # Finding the flavor id from the submitted form data
         flavor_id = int(request.POST["flavor"])
 
-        # Finding the passenger based on the id
+        # Finding the flavor based on the id
         flavor = Flavor.objects.get(pk=flavor_id)
 
-        # Add passenger to the flight
+        # Add flavor to the category
         category.flavors.add(flavor)
 
-        # Redirect user to flight page
+        # Redirect user to category page
         return HttpResponseRedirect(reverse("product", args=(category.id,)))
 
 
@@ -194,6 +195,10 @@ def order(request):
 @login_required
 def save_order(request):
 
+    # Saving a new order must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
     data = json.loads(request.body)
 
     # Find customer
@@ -204,9 +209,9 @@ def save_order(request):
 
     # Save new order to db
     order = Order(customer=customer, order_total=order_total)
-    # print(order)
     order.save()
 
+    # Save each ordered item
     for ordered_item in ordered_items:
         category = Category.objects.get(pk=ordered_item["category"])
         flavor = Flavor.objects.get(pk=ordered_item["flavor"])
@@ -215,7 +220,19 @@ def save_order(request):
         order = Order.objects.get(pk=order.id)
         new_ordered_item = OrderedItem(
             order=order, category=category, flavor=flavor, quantity=quantity, category_total=category_total)
-        print(new_ordered_item)
         new_ordered_item.save()
 
-    pass
+    # Redirect user to order's page
+    return HttpResponseRedirect(reverse("view_order", args=(order.id,)))
+    # return JsonResponse({"page": "Order saved successfully.", "orderId": order.id}, status=201)
+
+
+@login_required
+def view_order(request, order_id):
+
+    order = Order.objects.get(pk=order_id)
+
+    return render(request, "tropicanna/view_order.html", {
+        "order": order,
+        "ordered_items": order.items.all()
+    })
