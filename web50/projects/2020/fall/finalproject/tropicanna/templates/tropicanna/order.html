@@ -22,9 +22,9 @@
 		<strong>{{category.name}} - ${{category.price}}</strong>
 		{% for flavor in category.flavors.all %}
 		<div>
-			<input class="total-price" category-id="{{category.id}}" flavor-id="{{flavor.id}}" disabled>
+			<input class="total-price" category-id="{{category.id}}" flavor-id="{{flavor.id}}" disabled reset="">
 			<input type="number" category="{{category.id}}" flavor="{{flavor.id}}" price="{{category.price}}"
-				name="{{flavor.name}}-quantity" step="1">
+				name="{{flavor.name}}-quantity" step="1" reset="">
 			{{flavor.name}}
 		</div>
 		{% endfor %}
@@ -32,7 +32,7 @@
 		{% endfor %}
 	</div>
 	<div>
-		<input class="total-price" id="order-total" disabled><strong>Total</strong>
+		<input class="total-price" id="order-total" disabled reset=""><strong>Total</strong>
 	</div><br>
 	<div>
 		<input id="calculate" type="submit" class="btn btn-info" value="Calculate" />

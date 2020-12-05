@@ -77,6 +77,16 @@
 
 	</div>
 </div>
+<div>
+	<h3>All Orders</h3>
+	<ol>
+		{% for order in orders %}
+		<li>
+			<a href="{% url 'view_order' order.id %}">{{order}}</a>
+		</li>
+		{% endfor %}
+	</ol>
+</div>
 {% endif %}
 {% endblock %}
 

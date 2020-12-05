@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -75,7 +75,8 @@ def controls(request):
     return render(request, "tropicanna/controls.html", {
         "all_categories": Category.objects.all(),
         "all_flavors": Flavor.objects.all(),
-        "customers": Customer.objects.all()
+        "customers": Customer.objects.all(),
+        "orders": Order.objects.order_by("-order_date").all()
     })
 
 
@@ -236,3 +237,13 @@ def view_order(request, order_id):
         "order": order,
         "ordered_items": order.items.all()
     })
+
+
+@login_required
+def delivered(request, order_id):
+
+    if request.method == "POST":
+        order = get_object_or_404(Order, pk=order_id)
+        order.delivered = True
+        order.save()
+        return HttpResponseRedirect(reverse("index"))

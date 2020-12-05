@@ -4,6 +4,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Saves order
 	document.querySelector('#save').addEventListener('click', () => saveOrder());
+
+	// Clear order form if a new customer is selected before saving order
+	document.querySelector('select').onchange = function () {
+		document.querySelectorAll('input').forEach(input => {
+			// console.log(input.classList)
+			if (input.hasAttribute("reset")) {
+				input.value = null;
+				// console.log(input.value);
+			}
+		})
+	}
 });
 
 function calculateOrder() {

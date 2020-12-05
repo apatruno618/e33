@@ -8,11 +8,18 @@
 <br>
 <div>
 	<div>
-		<strong>Order Total: </strong>{{order.order_total}}
-	</div>
-	<div>
 		<strong>Order Date: </strong>{{order.order_date}}
 	</div>
+	<div>
+		<strong>Order Total: </strong>${{order.order_total}}
+	</div>
+
+	{% if not order.delivered %}
+	<form id="category-form" action="{% url 'delivered' order.id %}" method="POST">
+		{% csrf_token %}
+		<input type="submit" class="btn btn-success" value="Delivered" />
+	</form>
+	{% endif %}
 </div>
 <br>
 <table class="table table-hover">
