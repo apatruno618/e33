@@ -181,7 +181,6 @@ def add_flavor(request, category_id):
         return HttpResponseRedirect(reverse("product", args=(category.id,)))
 
 
-@csrf_exempt
 @login_required
 def order(request):
 
@@ -189,3 +188,14 @@ def order(request):
         "customers": Customer.objects.all(),
         "all_categories": Category.objects.all(),
     })
+
+
+@csrf_exempt
+@login_required
+def save_order(request):
+
+    data = json.loads(request.body)
+    # customerId = data.customerId
+    print(data["customerId"])
+
+    pass

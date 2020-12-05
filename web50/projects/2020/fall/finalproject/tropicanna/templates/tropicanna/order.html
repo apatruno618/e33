@@ -22,7 +22,6 @@
 		<strong>{{category.name}} - ${{category.price}}</strong>
 		{% for flavor in category.flavors.all %}
 		<div>
-			{{flavor.id}}
 			<input class="total-price" category-id="{{category.id}}" flavor-id="{{flavor.id}}" disabled>
 			<input type="number" category="{{category.id}}" flavor="{{flavor.id}}" price="{{category.price}}"
 				name="{{flavor.name}}-quantity" step="1">
@@ -32,7 +31,13 @@
 		{% endif %}
 		{% endfor %}
 	</div>
-	<input type="submit" class="btn btn-primary" value="Calculate" />
+	<div>
+		<input class="total-price" id="order-total" disabled><strong>Total</strong>
+	</div><br>
+	<div>
+		<input id="calculate" type="submit" class="btn btn-info" value="Calculate" />
+		<input id="save" type="submit" class="btn btn-primary" value="Save Order" />
+	</div>
 </form>
 
 {% endblock %}

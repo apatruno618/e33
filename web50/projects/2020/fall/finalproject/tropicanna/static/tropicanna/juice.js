@@ -15,7 +15,7 @@ function saveNewCustomer() {
 	const customerName = document.querySelector('#customer-name').value;
 	const customerPhone = document.querySelector('#customer-phone').value;
 
-	// Saves the email via API
+	// Saves the customer via API
 	fetch('/customer', {
 		method: 'POST',
 		body: JSON.stringify({
