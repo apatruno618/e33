@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Customer, Category, Flavor, Product
+from .models import User, Customer, Category, Flavor, Order, OrderedItem
 
 
 def index(request):
@@ -165,7 +165,7 @@ def add_flavor(request, category_id):
     # For a post request, add a new flavor
     if request.method == "POST":
 
-        # Accessing the product
+        # Accessing the product category
         category = Category.objects.get(pk=category_id)
 
         # Finding the passenger id from the submitted form data
@@ -195,7 +195,27 @@ def order(request):
 def save_order(request):
 
     data = json.loads(request.body)
-    # customerId = data.customerId
-    print(data["customerId"])
+
+    # Find customer
+    customer = Customer.objects.get(pk=data["customerId"])
+    order_total = data["orderTotal"]
+
+    ordered_items = data["orderedItems"]
+
+    # Save new order to db
+    order = Order(customer=customer, order_total=order_total)
+    # print(order)
+    order.save()
+
+    for ordered_item in ordered_items:
+        category = Category.objects.get(pk=ordered_item["category"])
+        flavor = Flavor.objects.get(pk=ordered_item["flavor"])
+        quantity = ordered_item["quantity"]
+        category_total = ordered_item["totalItemPrice"]
+        order = Order.objects.get(pk=order.id)
+        new_ordered_item = OrderedItem(
+            order=order, category=category, flavor=flavor, quantity=quantity, category_total=category_total)
+        print(new_ordered_item)
+        new_ordered_item.save()
 
     pass
