@@ -179,13 +179,13 @@ def add_flavor(request, category_id):
         # Add flavor to the category
         category.flavors.add(flavor)
 
-        # Redirect user to category page
+        # Redirect user back to category page
         return HttpResponseRedirect(reverse("product", args=(category.id,)))
 
 
 @login_required
 def order(request):
-
+    # used to set up order form
     return render(request, "tropicanna/order.html", {
         "customers": Customer.objects.all(),
         "all_categories": Category.objects.all(),
@@ -204,8 +204,9 @@ def save_order(request):
 
     # Find customer
     customer = Customer.objects.get(pk=data["customerId"])
-    order_total = data["orderTotal"]
 
+    # other important order data
+    order_total = data["orderTotal"]
     ordered_items = data["orderedItems"]
 
     # Save new order to db
@@ -225,7 +226,6 @@ def save_order(request):
 
     # Redirect user to order's page
     return HttpResponseRedirect(reverse("view_order", args=(order.id,)))
-    # return JsonResponse({"page": "Order saved successfully.", "orderId": order.id}, status=201)
 
 
 @login_required
@@ -241,9 +241,9 @@ def view_order(request, order_id):
 
 @login_required
 def delivered(request, order_id):
-
     if request.method == "POST":
         order = get_object_or_404(Order, pk=order_id)
         order.delivered = True
         order.save()
+
         return HttpResponseRedirect(reverse("index"))

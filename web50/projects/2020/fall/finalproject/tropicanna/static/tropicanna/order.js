@@ -64,8 +64,6 @@ function saveOrder() {
 		})
 			// Ensure the user the order was saved
 			.then((response) => {
-				console.log("order saved");
-				console.log(response);
 				// Simulate an HTTP redirect:
 				window.location.replace(response.url);
 			})

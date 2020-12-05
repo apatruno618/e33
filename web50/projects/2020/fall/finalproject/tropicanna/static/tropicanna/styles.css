@@ -24,15 +24,12 @@ img {
 	font-style: italic;
 }
 
-/* #customer-form, #category-form, #flavor-form {
-	max-width: 100%;
-} */
-
 select {
 	max-width: 20%;
 }
 
-.total-price {
-	max-width: 5%;
+/* keep it mobile friendly */
+.total-price, .quantity {
+	max-width: 12%;
 }
 

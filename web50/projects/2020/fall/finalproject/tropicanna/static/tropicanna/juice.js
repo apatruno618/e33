@@ -43,7 +43,7 @@ function saveNewFlavor() {
 
 	// Gets the contents of the form
 	const flavorName = document.querySelector('#flavor-name').value;
-	// Saves the email via API
+	// Saves the flavor via API
 	fetch('/flavor', {
 		method: 'POST',
 		body: JSON.stringify({

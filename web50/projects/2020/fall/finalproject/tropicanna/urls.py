@@ -15,8 +15,7 @@ urlpatterns = [
     path("orders/<int:order_id>", views.view_order, name="view_order"),
     path("delivered/<int:order_id>", views.delivered, name="delivered"),
 
-    # API
-    # save customers, flavors and orders
+    # API to save customers, flavors and orders
     path("customer", views.customer, name="customer"),
     path("flavor", views.flavor, name="flavor"),
     path("save_order", views.save_order, name="save_order"),
