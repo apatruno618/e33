@@ -23,7 +23,19 @@
 ## Submit an order
 
 + Displays a form where a customer is selected via a dropdown and "products" (categories with a flavor) are listed.
-+ Each product has an input option to enter the quantity of the desired item.
++ Each product has an input element to enter the quantity of the desired item.
++ If the user decides to not save an order and wants to fill out the form for a new customer, they can simply change the selection in the customer dropdown and this will clear the previously entered form data.
 + Clicking the "Calculate" button displays the total prices of each product and the order. These calculations are accomplished via Javascript. Category prices and flavors are saved as attributes in order.html and accessed in order.js in order to perform the calculations. This is a neat feature because it allows the user to calculate an order as many times (in case a customer wants to make sure they're staying in budget while placing an order) without saving it to the database.
 + Clicking the "Save Order" button utilizes the calculateOrder() function in juice.js, assembles all the data needed related to the order and the ordered items and send that to the backend to be saved to the database in the save_order() function of views.py. The general order data is saved to the order model while each product (again, an association of category and flavor) is saved to the orderedItem model.
 
+## Order pages
+
++ Each order is displayed on its own page.
++ Each order has a delivery status. If an order has not been delivered a button to change this status is displayed.
++ Orders that have not been delivered are considered "current" and are listed on the landing page.
++ Contents of an order are displayed in a bootstrap table.
+
+
+## Additional information
+
++ Each input and page has validations to ensure numbers are entered and that users are logged in/have valid csrf tokens.
